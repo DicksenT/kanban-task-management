@@ -1,12 +1,28 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import mobileLogo from '/assets/logo-mobile.svg'
 import chevronDown from '/assets/icon-chevron-down.svg'
 import addTask from '/assets/icon-add-task-mobile.svg'
 import ellipsis from '/assets/icon-vertical-ellipsis.svg'
 import Board from './Board'
+import axios from 'axios'
 
 function App() {
-
+  const [data, setData] = useState()
+  useEffect(()=>{
+    const getData = async() =>{
+      try{
+        const response = await axios.get('data.json')
+        setData(response.data.boards)
+      }
+      catch(e){
+        console.error(e);
+      }
+    }
+    getData()
+  },[])
+  useEffect(() =>{
+    setData(data)
+  },[data])
   return (
     <div className='mainApp'>
       <header>
@@ -26,9 +42,10 @@ function App() {
       </header>
       <main>
         <section className='boards'>
-          <Board/>
+        {data && <Board data={data[0]}/>}
         </section>
       </main>
+    
     </div>
   )
 }
