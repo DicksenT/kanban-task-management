@@ -12,6 +12,12 @@ function Board(props){
             window.removeEventListener('click', handleClick)
         )
     },[])
+
+    const [currentTask, setCurrentTask] = useState()
+    const openTask = (title) =>{
+        setTaskClicked(true)
+        setCurrentTask(title)
+    }
     return(
     <>
     <ul className="statusList">
@@ -21,29 +27,31 @@ function Board(props){
                     <h2>{column.name} (4)</h2>
                     <ul className="tasks">
                         {column.tasks.map((task) =>(
-                            <li className="task" onClick={() => setTaskClicked(true)}>
-                            <h3 className="title">
-                                {task.title}
-                            </h3>
-                            <h4 className="subtasksNum">
-                                0 of {task.subtasks.length} subtasks
-                            </h4>
-                        </li>
+                            <li className="task" onClick={() => openTask(task.title)}>
+                                <h3 className="title">
+                                    {task.title}
+                                </h3>
+                                <h4 className="subtasksNum">
+                                    {task.subtasks.filter(task => task.isCompleted == true).length} of {task.subtasks.length} subtasks
+                                </h4>
+                                {taskClicked && task.title == currentTask ? 
+                                    <div className="taskBackground">
+                                        <div className="taskDetails">
+                                            {task.title}
+                                            {console.log(task.title)}
+                                        </div>
+                                    </div> : 
+                                    ''}
+                            </li>
                         ))}
                     </ul>
                 </li>
             ))}
            
-            
+           
         
     </ul>
-    {taskClicked ? 
-    <div className="taskBackground">
-        <div className="taskDetails">
-            test
-        </div>
-    </div> : 
-    ''}
+    
     </>
     )
 }
