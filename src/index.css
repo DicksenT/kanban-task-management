@@ -144,16 +144,39 @@ li{
   align-items: center;
   padding: 8px;
   gap: 8px;
+  border-radius: 6px;
   background-color: #f4f7fd;
 }
 .currStatus{
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border: 1px solid #e4ebfa;
-  padding: 4px 8px;
-  border-radius: 6px;
+ 
 }
 .complete{
   text-decoration: line-through;
+  color: #828fa3;
+}
+.taskCurrStatus{
+  position: relative;
+}
+.statusTask{
+  border: 1px solid #e4ebfa;
+  background-color: white;
+  padding: 4px 8px;
+  border-radius: 6px;
+  height: 31px;
+  overflow: hidden;
+  transition: .4s;
+}
+.statusSelect{
+  height: 80px;
+}
+.statusClick{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.chevron{
+  transition: .4s;
 }

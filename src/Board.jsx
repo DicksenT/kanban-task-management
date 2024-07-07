@@ -1,16 +1,20 @@
 import { useEffect, useRef, useState } from "react"
 import ellipsis from '/assets/icon-vertical-ellipsis.svg'
 import chevronDown from '/assets/icon-chevron-down.svg'
+import chevronUp from '/assets/icon-chevron-up.svg'
 
 function Board(props){
     const {data, handleSubtaskClick} = props
     const [taskClicked, setTaskClicked] = useState(false)
     const taskDetails= useRef(null)
     const [currentTask, setCurrentTask] = useState()
+    const [currentStatus, setCurrentStatus] = useState()
 
-    const openTask = (task) =>{
+    const openTask = (task, status) =>{
         setTaskClicked(true)
         setCurrentTask(task.title)
+        setCurrentStatus(status)
+        console.log(currentStatus);
     }
 
     useEffect(() =>{
@@ -24,6 +28,9 @@ function Board(props){
             window.removeEventListener('click', handleClick)
         }
     },[])
+    
+    const statuses = ['Todo', 'Doing', 'Done']
+    const [statusClick, setStatusClick] = useState(false)
 
     return(
     <>
@@ -34,7 +41,7 @@ function Board(props){
                     <h2>{column.name} (4)</h2>
                     <ul className="tasks">
                         {column.tasks.map((task) =>(
-                            <li className="task" onClick={() => openTask(task)}>
+                            <li className="task" onClick={() => openTask(task, column.name)}>
                                 <h3 className="title">
                                     {task.title}
                                 </h3>
@@ -70,10 +77,18 @@ function Board(props){
                                             </div>}
                                             <div className="taskCurrStatus">
                                                 <p>Current Status</p>
-                                                <div className="currStatus">
-                                                    {column.name}
-                                                    <img src={chevronDown} alt="" />
-                                                </div>
+                                                <ul className={`statusTask ${statusClick ? 'statusSelect' : ''}`}>
+                                                    <div onClick={() => setStatusClick(prevState => !prevState)} className="statusClick">
+                                                        <li >{currentStatus}</li>
+                                                        <img src={statusClick ? chevronUp : chevronDown} alt="" className="chevron"/>
+                                                    </div>
+                                                    {statuses.map((status) =>{
+                                                        if(status != currentStatus){
+                                                            return <li>{status}</li>
+                                                        }
+                                                    })}
+                                                </ul>
+                                                
                                             </div>
                                         </div>
                                     </div> : 
