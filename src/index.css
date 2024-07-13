@@ -163,20 +163,22 @@ li{
 .statusTask{
   border: 1px solid #e4ebfa;
   background-color: white;
-  padding: 4px 8px;
+  padding: 3px 8px;
   border-radius: 6px;
-  height: 31px;
+  height: 28px;
   overflow: hidden;
   transition: .4s;
+  font-weight: 500;
+  font-size: 15px;
 }
 .statusSelect{
-  height: 80px;
+  height: 72px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 .statusClick{
   display: flex;
   align-items: center;
   justify-content: space-between;
-}
-.chevron{
-  transition: .4s;
 }
