@@ -4,7 +4,7 @@ import chevronDown from '/assets/icon-chevron-down.svg'
 import chevronUp from '/assets/icon-chevron-up.svg'
 
 function Board(props){
-    const {data, handleSubtaskClick} = props
+    const {data, handleSubtaskClick, handleChangeStatus} = props
     const [taskClicked, setTaskClicked] = useState(false)
     const taskDetails= useRef(null)
     const [currentTask, setCurrentTask] = useState()
@@ -14,7 +14,6 @@ function Board(props){
         setTaskClicked(true)
         setCurrentTask(task.title)
         setCurrentStatus(status)
-        console.log(currentStatus);
     }
 
     useEffect(() =>{
@@ -31,6 +30,10 @@ function Board(props){
     
     const statuses = ['Todo', 'Doing', 'Done']
     const [statusClick, setStatusClick] = useState(false)
+
+    const handleClick = (newStatus) =>{
+        setCurrentStatus(newStatus)
+    }
 
     return(
     <>
@@ -79,12 +82,12 @@ function Board(props){
                                                 <p>Current Status</p>
                                                 <ul className={`statusTask ${statusClick ? 'statusSelect' : ''}`}>
                                                     <div onClick={() => setStatusClick(prevState => !prevState)} className="statusClick">
-                                                        <li >{currentStatus}</li>
+                                                        <li >{column.name}</li>
                                                         <img src={statusClick ? chevronUp : chevronDown} alt="" className="chevron"/>
                                                     </div>
                                                     {statuses.map((status) =>{
-                                                        if(status != currentStatus){
-                                                            return <li>{status}</li>
+                                                        if(status != column.name){
+                                                            return <li className="otherStatus" onClick={() => handleChangeStatus(status, column.name, task)}>{status}</li>
                                                         }
                                                     })}
                                                 </ul>

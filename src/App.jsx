@@ -65,6 +65,34 @@ function App() {
     })
     setData(updatedData)
   }
+
+  const handleChangeStatus = (newStatus, currStatus, selectTask) =>{   
+    const updatedData = data.map((board) =>{
+      if (board.name == currBoard){
+        console.log('fon');
+        return{
+          ...board,
+          columns: board.columns.map((column)=>{
+            if(column.name == currStatus){
+              return{
+                ...column,
+                tasks: column.tasks.filter(task => task != selectTask)
+              }
+            }
+            if(column.name == newStatus){
+              return{
+                ...column,
+                tasks: [...column.tasks, selectTask]
+              }
+            }
+            return column
+          })
+        }
+      }
+      return board
+    })
+    setData(updatedData)
+  }
   return (
     <div className='mainApp'>
       <header>
@@ -84,7 +112,7 @@ function App() {
       </header>
       <main>
         <section className='boards'>
-        {data && <Board data={data[0]} handleSubtaskClick={handleSubtaskClick}/>}
+        {data && <Board data={data[0]} handleSubtaskClick={handleSubtaskClick} handleChangeStatus={handleChangeStatus}/>}
         </section>
       </main>
     
