@@ -1,13 +1,17 @@
 import { useEffect, useState } from 'react'
 import mobileLogo from '/assets/logo-mobile.svg'
 import chevronDown from '/assets/icon-chevron-down.svg'
-import addTask from '/assets/icon-add-task-mobile.svg'
+import addTaskLogo from '/assets/icon-add-task-mobile.svg'
 import ellipsis from '/assets/icon-vertical-ellipsis.svg'
 import Board from './Board'
 import axios from 'axios'
+import ManageTask from './ManageTask'
 
 function App() {
   const [data, setData] = useState()
+  const [addTask, setAddTask] = useState(false)
+  const [openStatusSelect, setOpenStatusSelect] = useState(false)
+
   useEffect(()=>{
     const getData = async() =>{
       try{
@@ -69,7 +73,6 @@ function App() {
   const handleChangeStatus = (newStatus, currStatus, selectTask) =>{   
     const updatedData = data.map((board) =>{
       if (board.name == currBoard){
-        console.log('fon');
         return{
           ...board,
           columns: board.columns.map((column)=>{
@@ -93,6 +96,22 @@ function App() {
     })
     setData(updatedData)
   }
+
+  const [statues, setStatues] = useState()
+  useEffect(() =>{
+    const getStatues = () =>{
+      const statusList = []
+        if(data){
+          data[0].columns.forEach((column)=>{
+            statusList.push(column.name)
+          })
+        }
+        setStatues(statusList) 
+    }
+    getStatues() 
+  },[data])
+
+  
   return (
     <div className='mainApp'>
       <header>
@@ -104,16 +123,22 @@ function App() {
           </p>
         </div>
         <div className="right">
-          <button className="addTask">
-            <img src={addTask} alt="" className='addBtn'/>
+          <button className="addTask" onClick={() => setAddTask(true)}>
+            <img src={addTaskLogo} alt="" className='addBtn'/>
           </button>
           <img src={ellipsis} alt="" className="ellipsis" />
         </div>
       </header>
       <main>
         <section className='boards'>
-        {data && <Board data={data[0]} handleSubtaskClick={handleSubtaskClick} handleChangeStatus={handleChangeStatus}/>}
+        {data && <Board 
+        data={data[0]} 
+        handleSubtaskClick={handleSubtaskClick} 
+        handleChangeStatus={handleChangeStatus}
+        statues = {statues}/>}
         </section>
+        {addTask && statues && <ManageTask type='add' statues={statues} setTask={setAddTask}/>
+        }
       </main>
     
     </div>
