@@ -97,7 +97,8 @@ li{
   font-size: 12px;
   color: grey;
 }
-.taskBackground{
+.taskBackground,
+.addNewTaskBg{
   position: absolute;
   height: 100vh;
   display: flex;
@@ -163,16 +164,17 @@ li{
 .statusTask{
   border: 1px solid #e4ebfa;
   background-color: white;
-  padding: 3px 8px;
+  padding: 0px 8px;
   border-radius: 6px;
-  height: 28px;
+  height: 40px;
   overflow: hidden;
   transition: .4s;
   font-weight: 500;
   font-size: 15px;
 }
 .statusSelect{
-  height: 72px;
+  height: 80px;
+  padding: 4px 8px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -181,4 +183,48 @@ li{
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+.addNewTask{
+  background-color: white;
+  width: 343px;
+  padding: 24px;
+  border-radius: 12px;
+}
+.addForm{
+  display: flex;
+  flex-direction: column;
+}
+.addForm input{
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid #e4ebfa;
+  border-radius: 8px;
+}
+.addForm textarea{
+  height: 112px;
+  resize: none;
+  padding: 12px;
+  border: 1px solid #e4ebfa;
+  border-radius: 8px;
+}
+.addSubtaskBtn{
+  border: none;
+  height: 40px;
+  background-color: #e4ebfa;
+  color: #635fc7;
+  border-radius: 24px;
+  font-weight: 900;
+}
+.otherStatus,
+.statusTask .statusClick{
+  height: 37px;
+  display: flex;
+  align-items: center;
+}
+.otherStatus{
+  margin-top: 4px;
+}
+input,
+textarea{
+  outline: none;
 }
