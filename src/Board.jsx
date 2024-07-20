@@ -4,11 +4,10 @@ import chevronDown from '/assets/icon-chevron-down.svg'
 import chevronUp from '/assets/icon-chevron-up.svg'
 
 function Board(props){
-    const {data, handleSubtaskClick, handleChangeStatus} = props
+    const {data, handleSubtaskClick, handleChangeStatus, statues} = props
     const [taskClicked, setTaskClicked] = useState(false)
     const taskDetails= useRef(null)
     const [currentTask, setCurrentTask] = useState()
-    const [currentStatus, setCurrentStatus] = useState()
 
     const openTask = (task, status) =>{
         setTaskClicked(true)
@@ -28,17 +27,13 @@ function Board(props){
         }
     },[])
     
-    const statuses = ['Todo', 'Doing', 'Done']
+    
     const [statusClick, setStatusClick] = useState(false)
-
-    const handleClick = (newStatus) =>{
-        setCurrentStatus(newStatus)
-    }
+    
 
     return(
     <>
     <ul className="statusList">
-        
             {data.columns.map((column) =>(
                 <li className="status">
                     <h2>{column.name} (4)</h2>
@@ -85,7 +80,7 @@ function Board(props){
                                                         <li >{column.name}</li>
                                                         <img src={statusClick ? chevronUp : chevronDown} alt="" className="chevron"/>
                                                     </div>
-                                                    {statuses.map((status) =>{
+                                                    {statues.map((status) =>{
                                                         if(status != column.name){
                                                             return <li className="otherStatus" onClick={() => handleChangeStatus(status, column.name, task)}>{status}</li>
                                                         }
