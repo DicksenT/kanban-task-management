@@ -10,7 +10,6 @@ import ManageTask from './ManageTask'
 function App() {
   const [data, setData] = useState()
   const [addTask, setAddTask] = useState(false)
-  const [openStatusSelect, setOpenStatusSelect] = useState(false)
 
   useEffect(()=>{
     const getData = async() =>{
@@ -97,6 +96,28 @@ function App() {
     setData(updatedData)
   }
 
+
+  const handleAddTask = (currColumn, newTask) =>{
+    const updatedData = data.map((board)=>{
+      if(board.name === currBoard){
+        return{
+          ...board,
+          columns: board.columns.map((column) =>{
+            if(column.name === currColumn){
+              return{
+                ...column,
+                tasks: [...column.tasks, newTask]
+              }
+            }
+            return column
+          })
+        }
+      }
+      return board
+    })
+    setData(updatedData)
+  }
+
   const [statues, setStatues] = useState()
   useEffect(() =>{
     const getStatues = () =>{
@@ -137,7 +158,7 @@ function App() {
         handleChangeStatus={handleChangeStatus}
         statues = {statues}/>}
         </section>
-        {addTask && statues && <ManageTask type='add' statues={statues} setTask={setAddTask}/>
+        {addTask && statues && <ManageTask type='add' statues={statues} setTask={setAddTask} handleAddTask={handleAddTask}/>
         }
       </main>
     
