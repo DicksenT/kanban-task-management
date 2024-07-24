@@ -12,7 +12,6 @@ function Board(props){
     const openTask = (task, status) =>{
         setTaskClicked(true)
         setCurrentTask(task.title)
-        setCurrentStatus(status)
     }
 
     useEffect(() =>{
