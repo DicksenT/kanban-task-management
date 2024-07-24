@@ -104,10 +104,12 @@ li{
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
   background-color: rgba(62, 63, 78, 0.5);
   top: 0;
   left: 0;
   width: 100vw;
+  overflow: hidden;
   z-index: 1;
 }
 .taskDetails{
@@ -189,8 +191,20 @@ li{
   width: 343px;
   padding: 24px;
   border-radius: 12px;
+  height: 520px;
+  overflow: auto;
 }
+
+.addNewTask::-webkit-scrollbar {
+  display: none;
+}
+
 .addForm{
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.inputContainer{
   display: flex;
   flex-direction: column;
 }
@@ -227,4 +241,16 @@ li{
 input,
 textarea{
   outline: none;
+}
+.subtaskInput{
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.subtaskInput input{
+  width: 90%;
+}
+.pointer{
+  cursor: pointer;
 }
