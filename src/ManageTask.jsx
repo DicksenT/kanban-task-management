@@ -4,10 +4,10 @@ import { useEffect, useRef, useState } from 'react'
 function ManageTask(props){
     const {type, statues, setTask, handleAddTask} = props
     const [openStatusSelect, setOpenStatusSelect] = useState(false)
-    const [title, setTitle] = useState()
-    const [description, setDescription] = useState()
+    const [title, setTitle] = useState('')
+    const [description, setDescription] = useState('')
     const [subtasks, setSubtasks] = useState([
-      {id:Math.floor(Math.random() * 9999999) , title: '', isCompleted: false}
+      {id:Math.floor(Math.random() * 9999999) , title: '', isCompleted: false, first: true}
     ])
     const [currStatus, setCurrStatus] = useState()
 
@@ -30,20 +30,29 @@ function ManageTask(props){
     },[])
     
     const addSubtask = () =>{
-      const newSubtask = {id:Math.floor(Math.random() * 9999999), title: '', isCompleted:false}
+      const newSubtask = {id:Math.floor(Math.random() * 9999999), title: '', isCompleted:false, first: false}
       setSubtasks([...subtasks, newSubtask])
      
     }
-    
+    const [error, setError] = useState(false)
+
     const handleSubmit = () =>{
-      const newTask = {
-        title: title,
-        description: description,
-        subtasks: subtasks
+      if(title === ''){
+        setError(true)
+        return
       }
-      handleAddTask(currStatus, newTask)
-     setTask(false)
+      else{
+        const newTask = {
+          title: title,
+          description: description,
+          subtasks: subtasks
+        }
+        handleAddTask(currStatus, newTask)
+        setTask(false)
+      }
     }
+
+   
     
     const handleSubtaskTitle = (id, newTitle) =>{
       setSubtasks(prevState => 
@@ -65,14 +74,19 @@ function ManageTask(props){
               <form action="" className='addForm' onSubmit={(e) => e.preventDefault()}>
                 <div className="inputContainer">
                   <label htmlFor="title">Title</label>
-                  <input type="text" name='title' placeholder='e.g Take coffee break' 
-                  value={title} onChange={(e) => setTitle(e.currentTarget.value)}/>
+                  <input 
+                  className={error ? 'error' : ''} type="text" name='title' 
+                  placeholder={error ?  'Please input title' : 'e.g Take coffee break'} 
+                  value={title} 
+                  onChange={(e) => setTitle(e.currentTarget.value)}
+                  onClick={() => setError(false)}/>
                 </div>
 
                 <div className="inputContainer">
                   <label htmlFor="description">Description</label>
                   <textarea name="description" id="" 
-                  value={description} onChange={(e) => setDescription(e.currentTarget.value)}></textarea>
+                  value={description} onChange={(e) => setDescription(e.currentTarget.value)}
+                  placeholder="e.g It's always good to take a break. This 15 minute break will recharge the batteries a little."></textarea>
                 </div>
                 
                 <div className="inputContainer">
@@ -80,7 +94,9 @@ function ManageTask(props){
                   <ul className="subtaskInputContainer">
                     {subtasks && subtasks.map((subtask) => (
                       <li className='subtaskInput'>
-                        <input type="text" value={subtask.title} onChange={(e) => handleSubtaskTitle(subtask.id, e.target.value)}/>
+                        <input type="text" value={subtask.title} 
+                        onChange={(e) => handleSubtaskTitle(subtask.id, e.target.value)}
+                        placeholder={subtask.first ? 'e.g Brew coffee': ''}/>
                         <img src={cross} className='pointer' alt="" onClick={() => handleDelete(subtask.id)} />
                       </li>
                     ))}
