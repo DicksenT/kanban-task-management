@@ -50,7 +50,13 @@ function Board(props){
                                         <div className="taskDetails" >
                                             <div className="taskTitle">
                                                 <h3 className="title">{task.title}</h3>
-                                                <img src={ellipsis} alt="" />
+                                                <div className="taskSetting">
+                                                    <img src={ellipsis} alt="" />
+                                                    <div className="settingSelect">
+                                                        <p>Edit</p>
+                                                        <p>Delete</p>
+                                                    </div>
+                                                </div>
                                             </div>
                                             {task.description && <p className="taskDescription">
                                                 {task.description}
