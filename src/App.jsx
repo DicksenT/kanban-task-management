@@ -117,6 +117,27 @@ function App() {
     })
     setData(updatedData)
   }
+  
+  const handleDelete = (currColumn, currTask) =>{
+    const updatedData = data.map((board)=>{
+      if(board.name === currBoard){
+        return{
+        ...board,
+        columns: board.columns.map((column) =>{
+          if(column.name === currColumn){
+            return{
+              ...column,
+              tasks: column.tasks.filter(task => task !== currTask)
+            }
+          }
+          return column
+        })
+        }
+      }
+      return board
+    })
+    setData(updatedData)
+  }
 
   const [statues, setStatues] = useState()
   useEffect(() =>{
@@ -156,9 +177,10 @@ function App() {
         data={data[0]} 
         handleSubtaskClick={handleSubtaskClick} 
         handleChangeStatus={handleChangeStatus}
+        handleDelete={handleDelete}
         statues = {statues}/>}
         </section>
-        {addTask && statues && <ManageTask type='add' statues={statues} setTask={setAddTask} handleAddTask={handleAddTask}/>
+        {addTask && statues && <ManageTask type='add' statues={statues} setTask={setAddTask} handleAddTask={handleAddTask} />
         }
       </main>
     
