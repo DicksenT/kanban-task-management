@@ -2,14 +2,15 @@ import { useEffect, useRef, useState } from "react"
 import ellipsis from '/assets/icon-vertical-ellipsis.svg'
 import chevronDown from '/assets/icon-chevron-down.svg'
 import chevronUp from '/assets/icon-chevron-up.svg'
+import Confirm from "./Confim"
 
 function Board(props){
-    const {data, handleSubtaskClick, handleChangeStatus, statues} = props
+    const {data, handleSubtaskClick, handleChangeStatus, statues, handleDelete} = props
     const [taskClicked, setTaskClicked] = useState(false)
     const taskDetails= useRef(null)
     const [currentTask, setCurrentTask] = useState()
 
-    const openTask = (task, status) =>{
+    const openTask = (task) =>{
         setTaskClicked(true)
         setCurrentTask(task.title)
     }
@@ -29,6 +30,7 @@ function Board(props){
     
     const [statusClick, setStatusClick] = useState(false)
     
+    const [deleteTask, setDeleteTask] = useState(false)
 
     return(
     <>
@@ -48,25 +50,34 @@ function Board(props){
                                 {taskClicked && task.title == currentTask ? 
                                     <div className="taskBackground" ref={taskDetails}>
                                         <div className="taskDetails" >
+
+
                                             <div className="taskTitle">
                                                 <h3 className="title">{task.title}</h3>
                                                 <div className="taskSetting">
                                                     <img src={ellipsis} alt="" />
                                                     <div className="settingSelect">
                                                         <p>Edit</p>
-                                                        <p>Delete</p>
+                                                        <p onClick={() => setDeleteTask(true)}>Delete</p>
                                                     </div>
                                                 </div>
                                             </div>
+                                            {deleteTask && <Confirm task={task} column={column.name} handleDelete={handleDelete} setTask={setTaskClicked}
+                                            setConfirm={setDeleteTask}/>}
+
                                             {task.description && <p className="taskDescription">
                                                 {task.description}
                                             </p>}
+
+
                                             {task.subtasks.length > 0 && <div className="taskSubtasks">
                                                 <h4 className="subtasksNum">
                                                     Subtasks (
                                                     {task.subtasks.filter(task => task.isCompleted == true).length} of {task.subtasks.length}
                                                     )
                                                 </h4>
+
+
                                                 <ul className="subtasks">
                                                     {task.subtasks.map((subtask) => (
                                                         <label className="subtask">
