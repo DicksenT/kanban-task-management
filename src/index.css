@@ -270,3 +270,30 @@ textarea{
   border-radius: 8px;
   font-weight: 600;
 }
+.confirmation h4{
+  color: #ea5555;
+  font-size: 20px;
+}
+.buttonChoice{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.confirm,
+.cancel{
+  border: none;
+  padding: 12px;
+  border-radius: 32px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.confirm{
+  background-color: #ea5555;
+  color: white;
+}
+.cancel{
+  background-color: #e4ebfa;
+  color: #635fc7;
+}
