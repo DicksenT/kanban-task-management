@@ -3,6 +3,7 @@ import ellipsis from '/assets/icon-vertical-ellipsis.svg'
 import chevronDown from '/assets/icon-chevron-down.svg'
 import chevronUp from '/assets/icon-chevron-up.svg'
 import Confirm from "./Confim"
+import ManageTask from "./ManageTask"
 
 function Board(props){
     const {data, handleSubtaskClick, handleChangeStatus, statues, handleDelete} = props
@@ -20,6 +21,9 @@ function Board(props){
             if(taskDetails.current && taskDetails.current == event.target){
                 setTaskClicked(false)
             }
+            if(ellipsisRef.current && !ellipsisRef.current.contains(event.target)){
+                setEllipsisClicked(false)
+            }
         }
         window.addEventListener('click', handleClick)
         return()=>{
@@ -31,6 +35,13 @@ function Board(props){
     const [statusClick, setStatusClick] = useState(false)
     
     const [deleteTask, setDeleteTask] = useState(false)
+
+    const [ellipsisClicked, setEllipsisClicked] = useState(false)
+    
+    const ellipsisRef = useRef(null)
+
+    const [editTask, setEditTask] = useState(false)
+
 
     return(
     <>
@@ -54,14 +65,18 @@ function Board(props){
 
                                             <div className="taskTitle">
                                                 <h3 className="title">{task.title}</h3>
-                                                <div className="taskSetting">
-                                                    <img src={ellipsis} alt="" />
-                                                    <div className="settingSelect">
-                                                        <p>Edit</p>
-                                                        <p onClick={() => setDeleteTask(true)}>Delete</p>
-                                                    </div>
+                                                <div className="taskSetting" ref={ellipsisRef}>
+                                                    <img src={ellipsis} alt="" onClick={() => setEllipsisClicked(prevState => !prevState)}  />
+                                                    {ellipsisClicked && <div className="settingSelect">
+                                                        <p onClick={() => setEditTask(true)}>Edit</p>
+                                                        <p onClick={() => setDeleteTask(true)} className="red">Delete</p>
+                                                    </div>}
+                                                    
                                                 </div>
                                             </div>
+
+                                            {editTask && <ManageTask type='edit' statues={statues} setTask={setEditTask} data={task} status={column.name}/>}
+                                        
                                             {deleteTask && <Confirm task={task} column={column.name} handleDelete={handleDelete} setTask={setTaskClicked}
                                             setConfirm={setDeleteTask}/>}
 
