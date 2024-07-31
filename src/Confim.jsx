@@ -10,7 +10,9 @@ function Confirm(props){
         <div className="taskBackground">
             <div className="confirmation taskDetails">
                 <h4>Delete this task?</h4>
-                <p>{`Are you sure want to delete the '${task.title}' task and its subtasks? This action cannot be reversed`}</p>
+                <p>Are you sure want to delete the 
+                    '<span className="bold">{task.title}</span>' 
+                    task and its subtasks? This action cannot be reversed</p>
                 <div className="buttonChoice">
                     <button className="confirm" onClick={deleteTask}>Delete</button>
                     <button className="cancel" onClick={() => setConfirm(false)}>Cancel</button>
