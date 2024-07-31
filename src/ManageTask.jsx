@@ -2,7 +2,7 @@ import cross from '/assets/icon-cross.svg'
 import chevronDown from '/assets/icon-chevron-down.svg'
 import { useEffect, useRef, useState } from 'react'
 function ManageTask(props){
-    const {type, statues, setTask, handleAddTask} = props
+    const {type, statues, setTask, handleAddTask, data, status} = props
     const [openStatusSelect, setOpenStatusSelect] = useState(false)
     const [title, setTitle] = useState('')
     const [description, setDescription] = useState('')
@@ -18,6 +18,15 @@ function ManageTask(props){
     },[statues])
 
     useEffect(() =>{
+      if(type === 'edit'){
+        setTitle(data.title)
+        setDescription(data.description)
+        setSubtasks(data.subtasks)
+        setCurrStatus(status)
+      }
+    },[])
+
+    useEffect(() =>{
       const handleClick = (e) =>{
         if(e.target === taskBg.current){
           setTask(false)
@@ -27,7 +36,7 @@ function ManageTask(props){
       return()=>{
         window.removeEventListener('click', handleClick)
       }
-    },[])
+    },[type])
     
     const addSubtask = () =>{
       const newSubtask = {id:Math.floor(Math.random() * 9999999), title: '', isCompleted:false, first: false}
