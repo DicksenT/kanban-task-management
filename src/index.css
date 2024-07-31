@@ -269,6 +269,11 @@ textarea{
   padding: 8px;
   border-radius: 8px;
   font-weight: 600;
+  background-color: white;
+  cursor: pointer;
+}
+.settingSelect p:first-child{
+  margin-bottom: 6px;
 }
 .confirmation h4{
   color: #ea5555;
@@ -296,4 +301,14 @@ textarea{
 .cancel{
   background-color: #e4ebfa;
   color: #635fc7;
+}
+.settingSelect p{
+  font-size: 14px;
+  font-weight: 700;
+}
+.red{
+  color: #ea5555;
+}
+.bold{
+  font-weight: 700;
 }
