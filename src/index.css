@@ -343,7 +343,7 @@ textarea{
   transition: .2s;
 }
 .boardActive{
-  background-color: #635fc7;
+  background-color: #635fc7 !important;
   color: white;
 }
 .boardActive img{
@@ -352,10 +352,17 @@ textarea{
 .createBoard{
   color: #635fc7;
 }
-.darkModeBtn{
+.darkModeBtn,
+.darkModeContainer{
   display: flex;
   align-items: center;
   justify-content: center;
+}
+.darkModeBtn{
+  width: 235px;
+  height: 48px;
+  background-color: #f4f7fd;
+  border-radius: 8px;
 }
 .checkbox{
   width: 0;
@@ -412,12 +419,14 @@ a{
 .dark textarea,
 .dark .statusSelect,
 .dark .statusTask,
-.darkStatus
+.darkStatus,
+.dark .boardList
 {
   background-color: transparent;
   border-color: #3e3f4e;
   color: white;
 }
-.darkCheckBox{
+.darkCheckBox,
+.dark .darkModeBtn{
   background-color: #20212c;
 }
