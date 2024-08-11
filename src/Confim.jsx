@@ -1,9 +1,20 @@
+import { useNavigate } from "react-router-dom"
+
 function Confirm(props){
-    const {column, task, handleDelete, setTask, setConfirm} = props
+    const {column, data, handleDelete, setTask, setConfirm, type, currBoard, setData, navigate} = props
+
     
     const deleteTask = () =>{
-        handleDelete(column, task)
-        setTask(false)
+        if(type != 'board'){
+            handleDelete(column, data)
+            setTask(false)
+        }
+        else{
+            setData(prevState =>(prevState.filter(board => board.name != currBoard)))
+            navigate()
+            
+            navigate(`/${data[0].name}`)
+        }   
         setConfirm(false)
     }
     return(
@@ -11,8 +22,10 @@ function Confirm(props){
             <div className="confirmation taskDetails">
                 <h4>Delete this task?</h4>
                 <p>Are you sure want to delete the 
-                    '<span className="bold">{task.title}</span>' 
-                    task and its subtasks? This action cannot be reversed</p>
+                    '<span className="bold">{type === 'board' ? currBoard : data.title}</span>' 
+                    {type === 'board' ? 
+                    'board ? This action will remove all columns and tasks and cannot be reversed' 
+                    :"task and its subtasks? This action cannot be reversed"}</p>
                 <div className="buttonChoice">
                     <button className="confirm" onClick={deleteTask}>Delete</button>
                     <button className="cancel" onClick={() => setConfirm(false)}>Cancel</button>
