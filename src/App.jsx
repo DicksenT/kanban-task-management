@@ -1,11 +1,13 @@
-import { useEffect, useState } from 'react'
-import mobileLogo from '/assets/logo-mobile.svg'
-import chevronDown from '/assets/icon-chevron-down.svg'
-import addTaskLogo from '/assets/icon-add-task-mobile.svg'
-import ellipsis from '/assets/icon-vertical-ellipsis.svg'
+import { useEffect, useRef, useState } from 'react'
 import Board from './Board'
 import axios from 'axios'
+import {useLocation,Link,Navigate,BrowserRouter as Router, Route, Routes} from 'react-router-dom'
+import EditBoard from './EditBoard'
+import BoardSelect from './BoardSelect'
 import ManageTask from './ManageTask'
+import Header from './Header'
+import Confirm from './Confim'
+
 
 function App() {
   const [data, setData] = useState()
@@ -25,9 +27,7 @@ function App() {
   },[])
   useEffect(() =>{
     setData(data)
-    if(data){
-      setCurrBoard(data[0].name)
-    }
+
   },[data])
 
   const [currBoard, setCurrBoard] = useState()
@@ -138,53 +138,134 @@ function App() {
     })
     setData(updatedData)
   }
-
-  const [statues, setStatues] = useState()
-  useEffect(() =>{
-    const getStatues = () =>{
-      const statusList = []
-        if(data){
-          data[0].columns.forEach((column)=>{
-            statusList.push(column.name)
+  const handleEdit = (currColumn, newTask, currTask) =>{
+    console.log(currTask);
+    const updatedData = data.map((board) =>{
+      if(board.name === currBoard){
+        return{
+          ...board,
+          columns: board.columns.map((column)=>{
+            if(column.name === currColumn){
+              return{
+                ...column,
+                tasks: column.tasks.map((task) =>{
+                  if(task.title === currTask.title){
+                    return newTask
+                    
+                  }
+                  return task
+                })
+              }
+            }
+            return column
           })
         }
-        setStatues(statusList) 
-    }
-    getStatues() 
-  },[data])
+      }
+      return board
+    })
+    setData(updatedData)
+  }
 
-  
-  return (
-    <div className='mainApp'>
-      <header>
-        <div className="left">
-          <img src={mobileLogo} alt="" />
-          <p className='currentBoard'>
-            Platform Launch
-            <img src={chevronDown} alt="" />
-          </p>
-        </div>
-        <div className="right">
-          <button className="addTask" onClick={() => setAddTask(true)}>
-            <img src={addTaskLogo} alt="" className='addBtn'/>
-          </button>
-          <img src={ellipsis} alt="" className="ellipsis" />
-        </div>
-      </header>
-      <main>
-        <section className='boards'>
-        {data && <Board 
-        data={data[0]} 
-        handleSubtaskClick={handleSubtaskClick} 
-        handleChangeStatus={handleChangeStatus}
-        handleDelete={handleDelete}
-        statues = {statues}/>}
-        </section>
-        {addTask && statues && <ManageTask type='add' statues={statues} setTask={setAddTask} handleAddTask={handleAddTask} />
-        }
-      </main>
+  const [statues, setStatues] = useState()
+  useEffect(() =>{    
+    const getStatues = () =>{
+      const statusList = []
+      if(data){
+        data.map(board =>{
+          if(board.name === currBoard){
+            board.columns.forEach((column) =>{
+              statusList.push(column)
+            })
+          }
+        })
+      }
+      
+      setStatues(statusList) 
+    }
+    getStatues()     
+  },[data, currBoard])
+
+  const addBoard = (newBoard) =>{
+    setData([...data, newBoard])   
+  }
+
+  const navigateBoard = ()=>{
+    console.log(data[0]);
+    console.log(data);
     
+  }
+ 
+  const [editBoard, setEditBoard] = useState(false)
+  const [selectBoard, setSelectBoard] = useState(false)
+  const [darkMode, setDarkMode] = useState(false)
+  const [type, setType] = useState()
+  const [deleteBoard, setDeleteBoard] = useState(false)
+
+  useEffect(() =>{
+    if(darkMode){
+      document.body.classList.add('darkBg')
+    }
+    else{
+      document.body.classList.remove('darkBg')
+    }
+  },[darkMode])
+
+
+  return (
+    <Router>
+    <div className='mainApp'>
+      <Header setSelectBoard={setSelectBoard} 
+              setEditBoard={setEditBoard} 
+              setAddTask={setAddTask}
+              setDarkMode={setDarkMode}
+              currBoard={currBoard}
+              selectBoard={selectBoard}
+              setCurrBoard={setCurrBoard}
+              setType={setType}
+              setDeleteBoard={setDeleteBoard}
+              darkMode={darkMode}/>
+      <main>
+          <section className='boards'>
+        <Routes>
+          <Route exact path='/' element={<Navigate replace to={`/${currBoard}`}/>}/>
+        {data && data.map((board) =>(
+          <Route key={board.name} path={`/${board.name}`} 
+            element={
+            <Board data={board} 
+            handleSubtaskClick={handleSubtaskClick} 
+            handleChangeStatus={handleChangeStatus}
+            handleDelete={handleDelete}
+            handleEdit={handleEdit}
+            statues = {statues}
+            darkMode={darkMode}/>}/>
+            
+              
+        ))}
+        </Routes>
+        </section>
+        
+      </main>
+      {editBoard && <EditBoard statues={statues} 
+                    setData={setData} currBoard={currBoard}
+                    addBoard={addBoard}
+                    setEditBoard={setEditBoard}
+                    type={type}
+                    />}
+      {selectBoard && <BoardSelect data={data} 
+                        setCurrBoard={setCurrBoard}
+                        currBoard={currBoard}
+                        setDarkMode={setDarkMode} 
+                        setSelectBoard={setSelectBoard}
+                        setEditBoard={setEditBoard}
+                        setType={setType}
+                        darkMode={darkMode}/>}
+      {addTask && statues && <ManageTask type='add' statues={statues} 
+      setTask={setAddTask} handleAddTask={handleAddTask} darkMode={darkMode}/>}
+      {deleteBoard && <Confirm type={'board'} 
+                      currBoard={currBoard} data={data} setData={setData} 
+                      setConfirm={setDeleteBoard} navigate={navigateBoard}/>}
     </div>
+    </Router>
   )
 }
 
