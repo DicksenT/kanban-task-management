@@ -2,7 +2,7 @@ import cross from '/assets/icon-cross.svg'
 import chevronDown from '/assets/icon-chevron-down.svg'
 import { useEffect, useRef, useState } from 'react'
 function ManageTask(props){
-    const {type, statues, setTask, handleAddTask, data, status} = props
+    const {type, statues, setTask, handleAddTask, data, status, handleEdit, darkMode} = props
     const [openStatusSelect, setOpenStatusSelect] = useState(false)
     const [title, setTitle] = useState('')
     const [description, setDescription] = useState('')
@@ -14,7 +14,7 @@ function ManageTask(props){
     const taskBg = useRef(null)
 
     useEffect(() =>{
-      setCurrStatus(statues[0])
+      setCurrStatus(statues[0].name)
     },[statues])
 
     useEffect(() =>{
@@ -46,19 +46,21 @@ function ManageTask(props){
     const [error, setError] = useState(false)
 
     const handleSubmit = () =>{
+      const newTask = {
+        title: title,
+        description: description,
+        subtasks: subtasks
+      }
       if(title === ''){
         setError(true)
-        return
+      }
+      else if(type === 'edit'){
+        handleEdit(currStatus, newTask, data)
       }
       else{
-        const newTask = {
-          title: title,
-          description: description,
-          subtasks: subtasks
-        }
         handleAddTask(currStatus, newTask)
-        setTask(false)
       }
+      setTask(false)
     }
 
    
@@ -76,9 +78,10 @@ function ManageTask(props){
       setSubtasks(prevState => prevState.filter(subtask => subtask.id !== id))
     }
 
+    
     return(
-        <div className="addNewTaskBg" ref={taskBg} >
-            <div className="addNewTask">
+        <div className='addNewTaskBg'  ref={taskBg} >
+            <div className={`addNewTask ${darkMode ? 'dark' : ''}`}>
               <h3>{type === 'edit' ? 'Edit Task' : 'Add New Task'}</h3>
               <form action="" className='addForm' onSubmit={(e) => e.preventDefault()}>
                 <div className="inputContainer">
@@ -122,15 +125,15 @@ function ManageTask(props){
                       <img src={chevronDown} alt="" />
                     </div>
                     {statues.map((status) =>{
-                        if(status != currStatus){
+                        if(status.name != currStatus){
                           return(
-                            <li className='otherStatus pointer' onClick={() => setCurrStatus(status)}>{status}</li>
+                            <li className='otherStatus pointer' onClick={() => setCurrStatus(status.name)}>{status.name}</li>
                           )
                         }
                     })}
                   </ul>
                 </div>
-                <button className='addSubtaskBtn pointer' onClick={handleSubmit} type='submit'>Add Task</button>
+                <button className='addSubtaskBtn pointer' onClick={handleSubmit} type='submit'>{type === 'edit' ? 'Edit Task' : 'Add Task'}</button>
               </form>
             </div>
         </div>
