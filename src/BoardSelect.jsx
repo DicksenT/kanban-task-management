@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from 'react'
 import {Link, useLocation} from 'react-router-dom'
 function BoardSelect(props){
     const taskBg = useRef(null)
-    const {data, setDarkMode, setSelectBoard,setCurrBoard, currBoard, setEditBoard, setType} = props
+    const {data, setDarkMode, setSelectBoard,setCurrBoard, currBoard, setEditBoard, setType, darkMode} = props
 
     useEffect(() =>{
         const handleClick = (e) =>{
@@ -32,7 +32,7 @@ function BoardSelect(props){
     },[location]) 
     return(
         <div className='taskBackground boardBg' ref={taskBg}>
-          <div className="taskDetails boardDetails">
+          <div className={`taskDetails boardDetails ${darkMode ? 'dark' : ''}`}>
             <h4>All Boards({data.length})</h4>
             <ul className='boardsList'>
               {data.map((board) =>(
@@ -48,13 +48,15 @@ function BoardSelect(props){
                   <p className='createBoard'>+Create New Board</p>
               </li>
             </ul>
-            <div className="dark">
-              <img src={lightLogo} alt="" />
-              <label className='switch'>
-                <input type="checkbox" className='checkbox' onChange={() => setDarkMode(prevState => !prevState)}/>
-                <span className="toggle"></span>
-              </label>
-              <img src={darkLogo} alt="" />
+            <div className="darkModeContainer">
+              <div className="darkModeBtn">
+                <img src={lightLogo} alt="" />
+                <label className='switch'>
+                  <input type="checkbox" className='checkbox' onChange={() => setDarkMode(prevState => !prevState)}/>
+                  <span className="toggle"></span>
+                </label>
+                <img src={darkLogo} alt="" />
+              </div>
             </div>
 
           </div>
