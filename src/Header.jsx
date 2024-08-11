@@ -10,7 +10,7 @@ function Header(props){
             setDeleteBoard, setEditBoard, 
             currBoard, setDarkMode, 
             setSelectBoard, selectBoard, setCurrBoard,
-            setType} = props
+            setType, darkMode} = props
     const [ellipsisClicked, setEllipsisClicked] = useState(false)
 
     const location = useLocation()
@@ -25,7 +25,7 @@ function Header(props){
 
     return(
     <>
-    <header className={selectBoard ? 'zindex' : ''}>
+    <header className={`${selectBoard ? 'zindex' : ''} ${darkMode ? 'dark' : ''}`}>
         <div className="left">
           <img src={mobileLogo} alt="" />
           <div className='currentBoard' onClick={() =>setSelectBoard(prevState =>!prevState)}>
