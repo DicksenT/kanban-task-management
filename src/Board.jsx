@@ -6,7 +6,7 @@ import Confirm from "./Confim"
 import ManageTask from "./ManageTask"
 
 function Board(props){
-    const {data, handleSubtaskClick, handleChangeStatus, statues, handleDelete} = props
+    const {data, handleSubtaskClick, handleChangeStatus, statues, handleDelete, handleEdit, darkMode} = props
     const [taskClicked, setTaskClicked] = useState(false)
     const taskDetails= useRef(null)
     const [currentTask, setCurrentTask] = useState()
@@ -42,16 +42,16 @@ function Board(props){
 
     const [editTask, setEditTask] = useState(false)
 
-
+    
     return(
     <>
     <ul className="statusList">
             {data.columns.map((column) =>(
-                <li className="status">
-                    <h2>{column.name} (4)</h2>
+                <li className={`status ${darkMode ? 'darkStatus' : ''}`}>
+                    <h2>{column.name} ({column.tasks.length})</h2>
                     <ul className="tasks">
                         {column.tasks.map((task) =>(
-                            <li className="task" onClick={() => openTask(task, column.name)}>
+                            <li className={`task ${darkMode ? 'dark' : ''}`} onClick={() => openTask(task, column.name)}>
                                 <h3 className="title">
                                     {task.title}
                                 </h3>
@@ -60,7 +60,7 @@ function Board(props){
                                 </h4>
                                 {taskClicked && task.title == currentTask ? 
                                     <div className="taskBackground" ref={taskDetails}>
-                                        <div className="taskDetails" >
+                                        <div className={`taskDetails ${darkMode ? 'dark' : ''}`} >
 
 
                                             <div className="taskTitle">
@@ -75,9 +75,11 @@ function Board(props){
                                                 </div>
                                             </div>
 
-                                            {editTask && <ManageTask type='edit' statues={statues} setTask={setEditTask} data={task} status={column.name}/>}
+                                            {editTask && <ManageTask type='edit' statues={statues} 
+                                                            setTask={setEditTask} data={task} status={column.name}
+                                                            handleEdit={handleEdit} darkMode={darkMode}/>}
                                         
-                                            {deleteTask && <Confirm task={task} column={column.name} handleDelete={handleDelete} setTask={setTaskClicked}
+                                            {deleteTask && <Confirm data={task} column={column.name} handleDelete={handleDelete} setTask={setTaskClicked}
                                             setConfirm={setDeleteTask}/>}
 
                                             {task.description && <p className="taskDescription">
@@ -95,7 +97,7 @@ function Board(props){
 
                                                 <ul className="subtasks">
                                                     {task.subtasks.map((subtask) => (
-                                                        <label className="subtask">
+                                                        <label className={`subtask ${darkMode ? 'darkCheckBox' : ''}`}>
                                                             <input type="checkbox"
                                                             checked={subtask.isCompleted}
                                                             onChange={() => handleSubtaskClick(column.name, task.title, subtask.title)} />
@@ -112,8 +114,8 @@ function Board(props){
                                                         <img src={statusClick ? chevronUp : chevronDown} alt="" className="chevron"/>
                                                     </div>
                                                     {statues.map((status) =>{
-                                                        if(status != column.name){
-                                                            return <li className="otherStatus" onClick={() => handleChangeStatus(status, column.name, task)}>{status}</li>
+                                                        if(status.name != column.name){
+                                                            return <li className="otherStatus" onClick={() => handleChangeStatus(status.name, column.name, task)}>{status.name}</li>
                                                         }
                                                     })}
                                                 </ul>
