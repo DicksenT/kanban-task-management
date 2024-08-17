@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom"
 
 function Confirm(props){
-    const {column, data, handleDelete, setTask, setConfirm, type, currBoard, setData, navigate} = props
+    const {column, data, handleDelete, setTask, setConfirm, type, currBoard, setData, navigate, darkMode} = props
 
     
     const deleteTask = () =>{
@@ -10,16 +10,14 @@ function Confirm(props){
             setTask(false)
         }
         else{
-            setData(prevState =>(prevState.filter(board => board.name != currBoard)))
-            navigate()
-            
+            setData(prevState =>(prevState.filter(board => board.name != currBoard)))            
             navigate(`/${data[0].name}`)
         }   
         setConfirm(false)
     }
     return(
         <div className="taskBackground">
-            <div className="confirmation taskDetails">
+            <div className={`confirmation taskDetails ${darkMode && 'dark'}`}>
                 <h4>Delete this task?</h4>
                 <p>Are you sure want to delete the 
                     '<span className="bold">{type === 'board' ? currBoard : data.title}</span>' 

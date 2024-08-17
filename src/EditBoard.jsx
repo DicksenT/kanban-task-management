@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom"
 
 
 function EditBoard(props){
-    const {statues, setData, currBoard, addBoard, setEditBoard, type} = props
+    const {statues, setData, currBoard, addBoard, setEditBoard, type, darkMode} = props
 
     const [boardName, setBoardName] = useState('')
     const [boardColumn, setBoardColumn] = useState([
@@ -66,7 +66,7 @@ function EditBoard(props){
     },[])
     return(
             <div className='taskBackground' ref={taskBg}>
-              <div className="taskDetails">
+              <div className={`taskDetails ${darkMode && 'dark'}`}>
                 <h4>Edit Board</h4>
                 <form action="" className="addForm" onSubmit={(e) => e.preventDefault()}>
                   <div className="inputContainer">
