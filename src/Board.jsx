@@ -6,7 +6,9 @@ import Confirm from "./Confim"
 import ManageTask from "./ManageTask"
 
 function Board(props){
-    const {data, handleSubtaskClick, handleChangeStatus, statues, handleDelete, handleEdit, darkMode} = props
+    const {data, handleSubtaskClick, handleChangeStatus, 
+        statues, handleDelete, handleEdit, 
+        darkMode, width, setEditBoard, setType} = props
     const [taskClicked, setTaskClicked] = useState(false)
     const taskDetails= useRef(null)
     const [currentTask, setCurrentTask] = useState()
@@ -41,6 +43,11 @@ function Board(props){
     const ellipsisRef = useRef(null)
 
     const [editTask, setEditTask] = useState(false)
+
+    const handleAddNewColumn = () =>{
+        setEditBoard(true)
+        setType('edit')
+    }
 
     
     return(
@@ -79,7 +86,7 @@ function Board(props){
                                                             setTask={setEditTask} data={task} status={column.name}
                                                             handleEdit={handleEdit} darkMode={darkMode}/>}
                                         
-                                            {deleteTask && <Confirm data={task} column={column.name} handleDelete={handleDelete} setTask={setTaskClicked}
+                                            {deleteTask && <Confirm darkMode={darkMode} data={task} column={column.name} handleDelete={handleDelete} setTask={setTaskClicked}
                                             setConfirm={setDeleteTask}/>}
 
                                             {task.description && <p className="taskDescription">
@@ -129,7 +136,10 @@ function Board(props){
                     </ul>
                 </li>
             ))}
-           
+           {width >= 1440 ? 
+            <div className="addNewColumn pointer" onClick={handleAddNewColumn}>
+                <p>+ New Column</p>
+           </div> : ''}
            
         
     </ul>

@@ -7,7 +7,7 @@ import BoardSelect from './BoardSelect'
 import ManageTask from './ManageTask'
 import Header from './Header'
 import Confirm from './Confim'
-
+import openSide from '/assets/icon-show-sidebar.svg'
 
 function App() {
   const [data, setData] = useState()
@@ -210,9 +210,32 @@ function App() {
     }
   },[darkMode])
 
+  const [width, setWidth] = useState(window.innerWidth)
+  useEffect(() =>{
+    const handleWidth = () =>{
+      setWidth(window.innerWidth)
+    }
+    window.addEventListener('resize', handleWidth)
+    return()=>{
+      window.removeEventListener('resize',handleWidth)
+    }
+  },[])
+  
+
 
   return (
     <Router>
+    <div className="sidebarAndMain">     
+    {selectBoard && <BoardSelect data={data} 
+                        setCurrBoard={setCurrBoard}
+                        currBoard={currBoard}
+                        setDarkMode={setDarkMode} 
+                        setSelectBoard={setSelectBoard}
+                        setEditBoard={setEditBoard}
+                        setType={setType}
+                        darkMode={darkMode}
+                        width={width >= 768}
+                        />}
     <div className='mainApp'>
       <Header setSelectBoard={setSelectBoard} 
               setEditBoard={setEditBoard} 
@@ -223,7 +246,10 @@ function App() {
               setCurrBoard={setCurrBoard}
               setType={setType}
               setDeleteBoard={setDeleteBoard}
-              darkMode={darkMode}/>
+              darkMode={darkMode}
+              width={width}/>
+              
+      
       <main>
           <section className='boards'>
         <Routes>
@@ -237,33 +263,35 @@ function App() {
             handleDelete={handleDelete}
             handleEdit={handleEdit}
             statues = {statues}
-            darkMode={darkMode}/>}/>
+            darkMode={darkMode}
+            width={width}
+            setEditBoard={setEditBoard}
+            setType={setType}/>}/>
             
               
         ))}
         </Routes>
         </section>
-        
+        {selectBoard || width < 768 ? '':
+        <div className='openSidebar pointer' onClick={() => setSelectBoard(true)}>
+          <img src={openSide} alt="" />
+        </div>}
       </main>
+      </div>
       {editBoard && <EditBoard statues={statues} 
                     setData={setData} currBoard={currBoard}
                     addBoard={addBoard}
                     setEditBoard={setEditBoard}
                     type={type}
+                    darkMode={darkMode}
                     />}
-      {selectBoard && <BoardSelect data={data} 
-                        setCurrBoard={setCurrBoard}
-                        currBoard={currBoard}
-                        setDarkMode={setDarkMode} 
-                        setSelectBoard={setSelectBoard}
-                        setEditBoard={setEditBoard}
-                        setType={setType}
-                        darkMode={darkMode}/>}
+      
       {addTask && statues && <ManageTask type='add' statues={statues} 
       setTask={setAddTask} handleAddTask={handleAddTask} darkMode={darkMode}/>}
       {deleteBoard && <Confirm type={'board'} 
                       currBoard={currBoard} data={data} setData={setData} 
-                      setConfirm={setDeleteBoard} navigate={navigateBoard}/>}
+                      setConfirm={setDeleteBoard} navigate={navigateBoard}
+                      darkMode={darkMode}/>}
     </div>
     </Router>
   )

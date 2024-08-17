@@ -3,9 +3,16 @@ import lightLogo from '/assets/icon-light-theme.svg'
 import darkLogo from '/assets/icon-dark-theme.svg' 
 import { useEffect, useRef, useState } from 'react'
 import {Link, useLocation} from 'react-router-dom'
+import sidebarLight from '/assets/logo-light.svg'
+import sidebarDark from '/assets/logo-dark.svg'
+import hideSidebar from '/assets/icon-hide-sidebar.svg'
+
+
 function BoardSelect(props){
     const taskBg = useRef(null)
-    const {data, setDarkMode, setSelectBoard,setCurrBoard, currBoard, setEditBoard, setType, darkMode} = props
+    const {data, setDarkMode, setSelectBoard,
+          setCurrBoard, currBoard, setEditBoard, 
+          setType, darkMode, width} = props
 
     useEffect(() =>{
         const handleClick = (e) =>{
@@ -21,18 +28,30 @@ function BoardSelect(props){
 
     const handleCreate = () =>{
       setEditBoard(true)
-      setSelectBoard(false)
+      
       setType('create')
+      if(!width){
+        setSelectBoard(false)
+      }
     }
 
 
     const location = useLocation()
     useEffect(()=>{
         setCurrBoard(decodeURIComponent(location.pathname).slice(1));
-    },[location]) 
+    },[location])
+    
+    
+  
     return(
-        <div className='taskBackground boardBg' ref={taskBg}>
+        <div className={width ? 'sidebar' : 'taskBackground'} ref={taskBg}>
           <div className={`taskDetails boardDetails ${darkMode ? 'dark' : ''}`}>
+            <div className="boardDetailsContainer">
+            {width ? 
+            <div className="logoContainer">
+              <img src={darkMode ? sidebarLight : sidebarDark} alt="" className='sidebarLogo'/>
+            </div> 
+            : ''}
             <h4>All Boards({data.length})</h4>
             <ul className='boardsList'>
               {data.map((board) =>(
@@ -48,15 +67,21 @@ function BoardSelect(props){
                   <p className='createBoard'>+Create New Board</p>
               </li>
             </ul>
+            </div>
             <div className="darkModeContainer">
               <div className="darkModeBtn">
                 <img src={lightLogo} alt="" />
-                <label className='switch'>
+                <label className='switch pointer'>
                   <input type="checkbox" className='checkbox' onChange={() => setDarkMode(prevState => !prevState)}/>
                   <span className="toggle"></span>
                 </label>
                 <img src={darkLogo} alt="" />
               </div>
+              {width && 
+              <div className='hideSidebar pointer' onClick={() => setSelectBoard(false)}>
+                <img src={hideSidebar} alt="" />
+                <p>Hide Sidebar</p>
+              </div>}
             </div>
 
           </div>
