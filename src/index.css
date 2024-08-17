@@ -6,13 +6,12 @@
   font-family: "Plus Jakarta Sans", sans-serif;
 }
 body{
-  background-color: #e4ebfa;
+  background-color: #f4f7fd;
 }
 .mainApp{
   min-width: 375px;
   width: 100%;
   overflow: hidden;
-  position: relative;
 }
 Header{
   background-color: white;
@@ -41,12 +40,24 @@ Header,
   border-radius: 16px;
   border: none;
   background-color: #635fc7;
+
+}
+.addTaskWidth{
+  display: flex;
+  width: 164px;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: white;
+}
+.addTaskWidth .addBtn{
+  width: 8px;
 }
 main{
   padding: 20px;
   overflow-x: auto;
   scrollbar-width: none;
-  height: calc(100vh - 72px);
+  height: calc(100vh - 64px);
 }
 li{
   list-style: none;
@@ -329,7 +340,6 @@ textarea{
   flex-direction: column;
 }
 .boardList{
-  position: relative;
   display: flex;
   align-items: center;
   padding-left: 0;
@@ -340,7 +350,6 @@ textarea{
   font-weight: 700;
   border-top-right-radius:60px;
   border-bottom-right-radius: 60px;
-  transition: .2s;
 }
 .boardActive{
   background-color: #635fc7 !important;
@@ -413,7 +422,7 @@ a{
 .dark .settingSelect{
   color: white;
   background-color: #2b2c37;
-  box-shadow: 0px 8px 5px 0px rgba(48, 46, 46, 0.2);
+  
 }
 .dark input,
 .dark textarea,
@@ -429,4 +438,122 @@ a{
 .darkCheckBox,
 .dark .darkModeBtn{
   background-color: #20212c;
+}
+.sidebarAndMain{
+  display: flex;
+}
+.sidebar{
+  position: relative;
+  width: 40%;
+}
+.sidebar .darkModeBtn{
+  width: 180px;
+}
+.sidebar .sidebarLogo{
+  width: 140px;
+}
+.sidebar .boardDetails{
+  height: 100vh;
+  border-radius: 0 ;
+}
+
+.logoContainer{
+  padding-left: 20px;
+  margin-bottom: 40px;
+}
+.boardDetailsContainer h4{
+  margin-bottom: 16px;
+}
+.sidebar .boardDetails{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.sidebar .darkModeContainer{
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.hideSidebar{
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding-left: 20px;
+  gap: 12px;
+  font-size: 12px;
+  color: #828fa3;
+  font-weight: 700;
+}
+.left p{
+  font-weight: 700;
+}
+.headerLogo{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.headerImg{
+  position: relative;
+  width: 140px;
+  margin-right: 28px;
+}
+.headerImg:after{
+  position: absolute;
+  content: '';
+  border-right: 1px solid #3e3f4e;
+  right: 0;
+  height: 100%;
+ 
+}
+.openSidebar{
+  position: absolute;
+  width: 56px;
+  height: 48px;
+  background-color: #635fc7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-top-right-radius: 16px;
+  border-bottom-right-radius: 16px;
+  left: 0;
+  bottom: 20px;
+}
+.addNewColumn{
+  height: 100vh;
+  width: 280px;
+  background-color: #e4ebfa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  margin: 40px 0;
+  font-weight: 700;
+}
+.addNewColumn:hover{
+  color: #635fc7;
+}
+@keyframes sidebarAnimate {
+  from{
+    left: -264px;
+    opacity: 0;
+  }
+  to{
+    left: 0;
+    opacity: 1;
+  }
+}
+@media (min-width:768px) {
+  .taskDetails{
+    width: 50%;
+  }
+  .boardDetails{
+    width: 100%;
+  }
+  .buttonChoice{
+    flex-direction: row;
+  }
+  .confirm,
+  .cancel{
+    width: 50%;
+  }
 }
