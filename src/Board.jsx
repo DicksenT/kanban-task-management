@@ -52,8 +52,8 @@ function Board(props){
     
     return(
     <>
-    <ul className="statusList">
-            {data.columns.map((column) =>(
+    <ul className="statusList" style={{width: data.columns.length === 0 && '100%'}}>
+            {data.columns.length > 0 ? data.columns.map((column) =>(
                 <li className={`status ${darkMode ? 'darkStatus' : ''}`}>
                     <h2>{column.name} ({column.tasks.length})</h2>
                     <ul className="tasks">
@@ -135,8 +135,14 @@ function Board(props){
                         ))}
                     </ul>
                 </li>
-            ))}
-           {width >= 1440 ? 
+            )) :
+            <div className="noColumnContainer">
+                <div className="noColumn">
+                    <p>This board is empty, create new column to get started.</p>
+                    <button className="addTask addTaskWidth" onClick={handleAddNewColumn}>+Add New Column</button>
+                </div>
+            </div>}
+           {data.columns && width >= 1440 ? 
             <div className="addNewColumn pointer" onClick={handleAddNewColumn}>
                 <p>+ New Column</p>
            </div> : ''}
