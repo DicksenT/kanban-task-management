@@ -193,6 +193,7 @@ li{
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  overflow: auto;
 }
 .statusClick{
   display: flex;
@@ -531,6 +532,21 @@ a{
 }
 .addNewColumn:hover{
   color: #635fc7;
+}
+.noColumnContainer{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: calc(100vh - 64px);
+  width: 100%;
+}
+.noColumn{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.decline{
+  cursor: no-drop;
 }
 @keyframes sidebarAnimate {
   from{
