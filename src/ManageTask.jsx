@@ -38,12 +38,37 @@ function ManageTask(props){
       }
     },[type])
     
+    const checkEmpty = () =>{
+      if(subtasks.length > 0 && subtasks[subtasks.length - 1].title === ''){
+        return true
+      }
+      return false
+    }
+
     const addSubtask = () =>{
-      const newSubtask = {id:Math.floor(Math.random() * 9999999), title: '', isCompleted:false, first: false}
-      setSubtasks([...subtasks, newSubtask])
+      if(!checkEmpty()){
+        const newSubtask = {id:Math.floor(Math.random() * 9999999), title: '', isCompleted:false, first: false}
+        setSubtasks([...subtasks, newSubtask])
+      }
      
     }
     const [error, setError] = useState(false)
+    const [subError, setSubError] = useState(false)
+
+    const errorCheck = () =>{
+      if(title && !checkEmpty()){
+        return false
+      }
+      else{
+        if(title === ''){
+          setError(true)
+        }
+        if(checkEmpty()){
+          setSubError(true)
+        }
+        return true
+      }
+    }
 
     const handleSubmit = () =>{
       const newTask = {
@@ -51,16 +76,16 @@ function ManageTask(props){
         description: description,
         subtasks: subtasks
       }
-      if(title === ''){
-        setError(true)
+      if(!errorCheck()){
+        if(type === 'edit'){
+          handleEdit(currStatus, newTask, data)
+        }
+        else{
+          handleAddTask(currStatus, newTask)
+        }
+        setTask(false)
       }
-      else if(type === 'edit'){
-        handleEdit(currStatus, newTask, data)
-      }
-      else{
-        handleAddTask(currStatus, newTask)
-      }
-      setTask(false)
+      
     }
 
    
@@ -74,11 +99,12 @@ function ManageTask(props){
       )
     }
  
-    const handleDelete = (id) =>{
-      setSubtasks(prevState => prevState.filter(subtask => subtask.id !== id))
+    const handleDelete = (id, title) =>{
+      setSubtasks(prevState => prevState.filter(subtask => 'id' in subtask ? subtask.id !== id : subtask.title !== title))
     }
 
-    
+    const [subtaskEmpty, setSubtaskEmpty] = useState(false)
+
     return(
         <div className='addNewTaskBg'  ref={taskBg} >
             <div className={`addNewTask ${darkMode ? 'dark' : ''}`}>
@@ -106,15 +132,16 @@ function ManageTask(props){
                   <ul className="subtaskInputContainer">
                     {subtasks && subtasks.map((subtask) => (
                       <li className='subtaskInput'>
-                        <input type="text" value={subtask.title} 
+                        <input className={subError && 'error'} type="text" value={subtask.title} 
                         onChange={(e) => handleSubtaskTitle(subtask.id, e.target.value)}
-                        placeholder={subtask.first ? 'e.g Brew coffee': ''}/>
-                        <img src={cross} className='pointer' alt="" onClick={() => handleDelete(subtask.id)} />
+                        placeholder={subError ? 'Please Enter Subtask Title Or Remove It' : subtask.first ? 'e.g Brew coffee': ''}
+                        onClick={() => setSubError(false)}/>
+                        <img src={cross} className='pointer' alt="" onClick={() => handleDelete(subtask.id, subtask.title)} />
                       </li>
                     ))}
                     
                   </ul>
-                  <button className='addSubtaskBtn pointer' onClick={addSubtask}>Add New Subtask</button>
+                  <button className={`addSubtaskBtn pointer`} onClick={addSubtask}>Add New Subtask</button>
                 </div>
 
                 <div className="inputContainer">
