@@ -221,7 +221,40 @@ function App() {
     }
   },[])
   
+  const containerRef = useRef(null)
+  const isDragging = useRef(false)
+  const startX = useRef(0)
+  const startY = useRef(0)
+  const scrollLeft = useRef(0)
+  const scrollTop = useRef(0)
 
+  const handleMouseDown = (e) =>{
+    isDragging.current = true
+    startX.current = e.pageX - containerRef.current.offsetLeft
+    startY.current = e.pageY - containerRef.current.offsetTop
+    scrollLeft.current = containerRef.current.scrollLeft
+    scrollTop.current = containerRef.current.scrollTop
+    containerRef.current.style.cursor = 'grabbing'
+  }
+  const handleMouseUp = () =>{
+    isDragging.current = false
+
+  }
+  const handleMouseLeave = () =>{
+    isDragging.current = false
+
+  }
+  const handleMouseMove = (e) =>{
+    if(!isDragging.current) return
+
+    const x = e.pageX - containerRef.current.offsetLeft
+    const y = e.pageY - containerRef.current.offsetTop
+    const walkX = x - startX.current
+    const walkY = y - startY.current
+
+    containerRef.current.scrollLeft = scrollLeft.current - walkX
+    containerRef.current.scrollTop = scrollTop.current - walkY
+  }
 
   return (
     <Router>
@@ -250,7 +283,8 @@ function App() {
               width={width}/>
               
       
-      <main>
+      <main ref={containerRef} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} onMouseLeave={handleMouseLeave} 
+      onMouseMove={handleMouseMove}>
           <section className='boards'>
         <Routes>
           <Route exact path='/' element={<Navigate replace to={`/${currBoard}`}/>}/>
