@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom"
 function Confirm(props){
     const {column, data, handleDelete, setTask, setConfirm, type, currBoard, setData, navigate, darkMode} = props
 
-    
+    navigate = useNavigate()
     const deleteTask = () =>{
         if(type != 'board'){
             handleDelete(column, data)

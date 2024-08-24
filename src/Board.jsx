@@ -44,6 +44,8 @@ function Board(props){
 
     const [editTask, setEditTask] = useState(false)
 
+
+    /* activate editBoard component */
     const handleAddNewColumn = () =>{
         setEditBoard(true)
         setType('edit')

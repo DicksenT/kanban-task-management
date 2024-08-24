@@ -32,6 +32,7 @@ function App() {
 
   const [currBoard, setCurrBoard] = useState()
 
+  /* List of all Function where it mapped Json to change the value */
   const handleSubtaskClick = (currColumn, currTask, currSubtask) =>{
     const updatedData = data.map((board) =>{
       if (board.name == currBoard){
@@ -166,6 +167,7 @@ function App() {
     setData(updatedData)
   }
 
+  /* get all column or status on currBoard */
   const [statues, setStatues] = useState()
   useEffect(() =>{    
     const getStatues = () =>{
@@ -189,12 +191,6 @@ function App() {
     setData([...data, newBoard])   
   }
 
-  const navigateBoard = ()=>{
-    console.log(data[0]);
-    console.log(data);
-    
-  }
- 
   const [editBoard, setEditBoard] = useState(false)
   const [selectBoard, setSelectBoard] = useState(false)
   const [darkMode, setDarkMode] = useState(false)
@@ -210,6 +206,7 @@ function App() {
     }
   },[darkMode])
 
+  /* Update the width when window resizing */
   const [width, setWidth] = useState(window.innerWidth)
   useEffect(() =>{
     const handleWidth = () =>{
@@ -221,6 +218,8 @@ function App() {
     }
   },[])
   
+
+  /*Function For Drag Scrolling*/
   const containerRef = useRef(null)
   const isDragging = useRef(false)
   const startX = useRef(0)
@@ -228,6 +227,12 @@ function App() {
   const scrollLeft = useRef(0)
   const scrollTop = useRef(0)
 
+
+  /*Run When mouse is Clicked,
+  Start x and y is to know location of the cursor where
+  pageX/Y is where it located in the screen minus where container is located
+  
+  scroll is to know how far the container been scrolled X/Y axis*/
   const handleMouseDown = (e) =>{
     isDragging.current = true
     startX.current = e.pageX - containerRef.current.offsetLeft
@@ -235,6 +240,8 @@ function App() {
     scrollLeft.current = containerRef.current.scrollLeft
     scrollTop.current = containerRef.current.scrollTop
     containerRef.current.style.cursor = 'grabbing'
+    console.log(startX);
+    
   }
   const handleMouseUp = () =>{
     isDragging.current = false
@@ -258,6 +265,7 @@ function App() {
 
   return (
     <Router>
+    {/* sidebar or boardSelect located here because >768 px layout */}
     <div className="sidebarAndMain">     
     {selectBoard && <BoardSelect data={data} 
                         setCurrBoard={setCurrBoard}
@@ -269,6 +277,7 @@ function App() {
                         darkMode={darkMode}
                         width={width >= 768}
                         />}
+
     <div className='mainApp'>
       <Header setSelectBoard={setSelectBoard} 
               setEditBoard={setEditBoard} 
@@ -287,7 +296,10 @@ function App() {
       onMouseMove={handleMouseMove}>
           <section className='boards'>
         <Routes>
+
           <Route exact path='/' element={<Navigate replace to={`/${currBoard}`}/>}/>
+
+        {/* mapped data so each board get the path based on their name */}
         {data && data.map((board) =>(
           <Route key={board.name} path={`/${board.name}`} 
             element={
@@ -312,6 +324,8 @@ function App() {
         </div>}
       </main>
       </div>
+
+      {/*Bunch of click popup, should be okay to put it anywhere */}
       {editBoard && <EditBoard statues={statues} 
                     setData={setData} currBoard={currBoard}
                     addBoard={addBoard}
@@ -324,7 +338,7 @@ function App() {
       setTask={setAddTask} handleAddTask={handleAddTask} darkMode={darkMode}/>}
       {deleteBoard && <Confirm type={'board'} 
                       currBoard={currBoard} data={data} setData={setData} 
-                      setConfirm={setDeleteBoard} navigate={navigateBoard}
+                      setConfirm={setDeleteBoard}
                       darkMode={darkMode}/>}
     </div>
     </Router>

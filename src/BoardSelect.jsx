@@ -13,7 +13,8 @@ function BoardSelect(props){
     const {data, setDarkMode, setSelectBoard,
           setCurrBoard, currBoard, setEditBoard, 
           setType, darkMode, width} = props
-
+    
+    /* close the boardSelect or popup when click the background */
     useEffect(() =>{
         const handleClick = (e) =>{
             if(taskBg.current && taskBg.current === e.target){
@@ -26,11 +27,13 @@ function BoardSelect(props){
         }
     },[])
 
+
+    /* Set another component to active or popup when this function active, which in here to create new Board and set the type */
     const handleCreate = () =>{
       setEditBoard(true)
-      
       setType('create')
       if(!width){
+        /*prevent sidebard to close*/
         setSelectBoard(false)
       }
     }
@@ -52,6 +55,7 @@ function BoardSelect(props){
               <img src={darkMode ? sidebarLight : sidebarDark} alt="" className='sidebarLogo'/>
             </div> 
             : ''}
+
             <h4>All Boards({data.length})</h4>
             <ul className='boardsList'>
               {data.map((board) =>(
@@ -67,6 +71,7 @@ function BoardSelect(props){
                   <p className='createBoard'>+Create New Board</p>
               </li>
             </ul>
+            
             </div>
             <div className="darkModeContainer">
               <div className="darkModeBtn">

@@ -27,6 +27,7 @@ function Header(props){
 
     const headerEllipsis = useRef(null)
 
+    /* close the ellipsis drop down menu when clicked other than headerEllipsis ref or anything contains in it or it's childern */
     useEffect(() =>{
       const handleClick = (e) =>{
         if(headerEllipsis.current && !headerEllipsis.current.contains(e.target))
