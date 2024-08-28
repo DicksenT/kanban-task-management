@@ -15,6 +15,7 @@ function Header(props){
             setType, darkMode, width} = props
     const [ellipsisClicked, setEllipsisClicked] = useState(false)
 
+    /* set currBoard based on url location */
     const location = useLocation()
     useEffect(()=>{
         setCurrBoard(decodeURIComponent(location.pathname).slice(1))

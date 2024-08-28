@@ -25,6 +25,8 @@ function EditBoard(props){
             column.id === colId ? {...column, name:newName} : column
         )))
     }
+
+    /* only delete based on id or name */
     const handleDelete = (id, name) => {
         setBoardColumn(prevState => prevState.filter(col => 'id' in col ? col.id !== id : col.name !== name))
     }
@@ -34,6 +36,8 @@ function EditBoard(props){
     
     const navigate = useNavigate()
 
+
+    /* check newest/latest column input if it's empty */
     const checkEmpty=() =>{
         if(boardColumn.length > 0 && boardColumn[boardColumn.length -1].name === ''){
             return true
@@ -41,6 +45,7 @@ function EditBoard(props){
         return false
     }
 
+    //function to check if the title and latest column input is not empty
     const errorCheck = () =>{
         if(boardName && !checkEmpty()){
             return false
@@ -57,13 +62,16 @@ function EditBoard(props){
             return true
         }
     }
+
     const handleSubmit = () =>{
         const newBoard ={
             name: boardName, 
             columns: boardColumn
         }
+        //only submit if no error
         if(!errorCheck()){
             if(type === 'edit'){
+                //replacing the current board with updated board
                 setData(prevState => prevState.map((board) =>(
                     board.name === currBoard ? newBoard : board
                 )))
@@ -90,8 +98,8 @@ function EditBoard(props){
         }
     },[])
 
-    const [noColumnTitle, setNoColumnTitle] = useState(false)
 
+    //function to add new column input
     const handleAddColumn = () =>{
         if(!checkEmpty()){
             const newColumn = {name:'', id:Math.floor(Math.random() * 999999), tasks:[]}
@@ -124,7 +132,7 @@ function EditBoard(props){
                         </li>
                       ))}
                     </ul>
-                    <button className={`addSubtaskBtn pointer ${noColumnTitle && 'decline'}`} 
+                    <button className={`addSubtaskBtn pointer`} 
                     onClick={handleAddColumn}>+Add New Column</button>
                   </div>
                     <button className="addSubtaskBtn pointer subtmitBtn" onClick={handleSubmit}>
