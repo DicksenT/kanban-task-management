@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import Board from './Board'
 import axios from 'axios'
 import {useLocation,Link,Navigate,BrowserRouter as Router, Route, Routes} from 'react-router-dom'
@@ -8,16 +8,23 @@ import ManageTask from './ManageTask'
 import Header from './Header'
 import Confirm from './Confim'
 import openSide from '/assets/icon-show-sidebar.svg'
+import { kanbanContext } from './context/KanbanContext'
 
 function App() {
+  const {state, dispatch} = useContext(kanbanContext)
   const [data, setData] = useState()
   const [addTask, setAddTask] = useState(false)
 
   useEffect(()=>{
     const getData = async() =>{
       try{
-        const response = await axios.get('data.json')
-        setData(response.data.boards)
+        const response = await fetch('https://kanban-task-management-web-app-86h6.onrender.com/kanban')
+        const json = response.json()
+        if(response.ok){
+          dispatch({type:'SET_DATA', payload:json})
+          console.log(state);
+          
+        }
       }
       catch(e){
         console.error(e);
