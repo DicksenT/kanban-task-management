@@ -162,7 +162,7 @@ const kanbanReducer = (state, action) =>{
     }
 }
 
-export const kanbanContextProvider = ({children}) =>{
+export const KanbanContextProvider = ({children}) =>{
 const [state, dispatch] = useReducer(kanbanReducer, {
     boards:[],
     currBoard: null
