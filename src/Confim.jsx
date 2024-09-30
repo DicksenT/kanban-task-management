@@ -1,22 +1,23 @@
-import { useNavigate } from "react-router-dom"
+import { useContext } from "react"
+import { kanbanContext } from "./context/KanbanContext"
 
 function Confirm(props){
-    const {column, data, handleDelete, setTask, setConfirm, type, currBoard, setData, navigate, darkMode} = props
+    const {column, data,  setTask, setConfirm, type} = props
+    const {state, dispatch} = useContext(kanbanContext)
 
     const deleteTask = () =>{
         if(type != 'board'){
-            handleDelete(column, data)
+            dispatch({type:"DEL_TASK", payload:{currColumn:column, delTask:data}})
             setTask(false)
         }
         else{
-            setData(prevState =>(prevState.filter(board => board.name != currBoard)))            
-
+            dispatch({type:"DEL_BOARD"})
         }   
         setConfirm(false)
     }
     return(
         <div className="taskBackground">
-            <div className={`confirmation taskDetails ${darkMode && 'dark'}`}>
+            <div className={`confirmation taskDetails ${state.darkMode && 'dark'}`}>
                 <h4>Delete this task?</h4>
                 <p>Are you sure want to delete the 
                     '<span className="bold">{type === 'board' ? currBoard : data.title}</span>' 

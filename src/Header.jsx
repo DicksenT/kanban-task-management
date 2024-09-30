@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react"
+import { useContext, useEffect, useRef, useState } from "react"
 import mobileLogo from '/assets/logo-mobile.svg'
 import chevronDown from '/assets/icon-chevron-down.svg'
 import addTaskLogo from '/assets/icon-add-task-mobile.svg'
@@ -6,19 +6,19 @@ import ellipsis from '/assets/icon-vertical-ellipsis.svg'
 import { useLocation } from "react-router-dom"
 import logoLight from '/assets/logo-light.svg'
 import logoDark from '/assets/logo-dark.svg'
+import { kanbanContext } from "./context/KanbanContext"
 
 function Header(props){
-    const {setAddTask, 
-            setDeleteBoard, setEditBoard, 
-            currBoard, setDarkMode, 
-            setSelectBoard, selectBoard, setCurrBoard,
-            setType, darkMode, width} = props
+    const {setAddTask, setDeleteBoard, setEditBoard, 
+            setSelectBoard, selectBoard, 
+            setType,  width} = props
     const [ellipsisClicked, setEllipsisClicked] = useState(false)
+    const {state, dispatch} = useContext(kanbanContext)
 
     /* set currBoard based on url location */
     const location = useLocation()
     useEffect(()=>{
-        setCurrBoard(decodeURIComponent(location.pathname).slice(1))
+        dispatch({type:'SET_CURRBOARD', payload:decodeURIComponent(location.pathname).slice(1)})
     },[location])
 
     const handleEditBoard = () =>{
@@ -42,21 +42,21 @@ function Header(props){
     
     return(
     <>
-    <header className={`${selectBoard && width < 768 ? 'zindex' : ''} ${darkMode ? 'dark' : ''}`}>
+    <header className={`${selectBoard && width < 768 ? 'zindex' : ''} ${state.darkMode && 'dark' }`}>
         <div className="left">
           {selectBoard ? 
-            <p>{currBoard}</p>
+            <p>{state.currBoard}</p>
           :
           (width >= 768 ?
             (<div className="headerLogo">
-            <img onClick={() => setSelectBoard(true)} className="headerImg" src={darkMode ? logoLight : logoDark} alt="" />
-            <p>{currBoard}</p>
+            <img onClick={() => setSelectBoard(true)} className="headerImg" src={state.darkMode ? logoLight : logoDark} alt="" />
+            <p>{state.currBoard}</p>
             </div>)
             :
             <>
           <img src={mobileLogo} alt="" />
           <div className='currentBoard' onClick={() =>setSelectBoard(prevState =>!prevState)}>
-            <p>{currBoard}</p>
+            <p>{state.currBoard}</p>
             <img src={chevronDown} alt="" />
           </div> 
           </>

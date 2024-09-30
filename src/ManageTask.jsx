@@ -1,8 +1,10 @@
 import cross from '/assets/icon-cross.svg'
 import chevronDown from '/assets/icon-chevron-down.svg'
-import { useEffect, useRef, useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
+import { kanbanContext } from './context/KanbanContext'
 function ManageTask(props){
-    const {type, statues, setTask, handleAddTask, data, status, handleEdit, darkMode} = props
+    const {type, statues, setTask, data, status, } = props
+    const {state, dispatch} = useContext(kanbanContext)
     const [openStatusSelect, setOpenStatusSelect] = useState(false)
     const [title, setTitle] = useState('')
     const [description, setDescription] = useState('')
@@ -70,7 +72,8 @@ function ManageTask(props){
       }
     }
 
-    const handleSubmit = () =>{
+    const handleSubmit = (e) =>{
+      e.preventDefault()
       const newTask = {
         title: title,
         description: description,
@@ -78,10 +81,10 @@ function ManageTask(props){
       }
       if(!errorCheck()){
         if(type === 'edit'){
-          handleEdit(currStatus, newTask, data)
+          dispatch({type:"EDIT_TASK", payload:{currColumns: currStatus, currTask: data, newTask: newTask}})
         }
         else{
-          handleAddTask(currStatus, newTask)
+          dispatch({type:"ADD_TASK", payload:{currColumns: currStatus, newTask:newTask}})
         }
         setTask(false)
       }
@@ -107,13 +110,13 @@ function ManageTask(props){
 
     return(
         <div className='addNewTaskBg'  ref={taskBg} >
-            <div className={`addNewTask ${darkMode ? 'dark' : ''}`}>
+            <div className={`addNewTask ${state.darkMode && 'dark'}`}>
               <h3>{type === 'edit' ? 'Edit Task' : 'Add New Task'}</h3>
-              <form action="" className='addForm' onSubmit={(e) => e.preventDefault()}>
+              <form action="" className='addForm' onSubmit={(e) => handleSubmit(e)}>
                 <div className="inputContainer">
                   <label htmlFor="title">Title</label>
                   <input 
-                  className={error ? 'error' : ''} type="text" name='title' 
+                  className={error && 'error'} type="text" name='title' 
                   placeholder={error ?  'Please input title' : 'e.g Take coffee break'} 
                   value={title} 
                   onChange={(e) => setTitle(e.currentTarget.value)}
@@ -146,7 +149,7 @@ function ManageTask(props){
 
                 <div className="inputContainer">
                   <label htmlFor="statuesSelect">Status</label>
-                  <ul className={`statusTask ${openStatusSelect ? 'statusSelect' : ''}`}>
+                  <ul className={`statusTask ${openStatusSelect && 'statusSelect'}`}>
                     <div className="setStatus statusClick pointer" onClick={() => setOpenStatusSelect(prevState => !prevState)}>
                       <li>{currStatus}</li>
                       <img src={chevronDown} alt="" />
@@ -160,7 +163,9 @@ function ManageTask(props){
                     })}
                   </ul>
                 </div>
-                <button className='addSubtaskBtn pointer' onClick={handleSubmit} type='submit'>{type === 'edit' ? 'Edit Task' : 'Add Task'}</button>
+                <button className='addSubtaskBtn pointer' type='submit'>
+                  {type === 'edit' ? 'Edit Task' : 'Add Task'}
+                </button>
               </form>
             </div>
         </div>

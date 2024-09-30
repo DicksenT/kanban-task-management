@@ -1,11 +1,12 @@
-import { useEffect, useRef, useState } from "react"
+import { useContext, useEffect, useRef, useState } from "react"
 import cross from '/assets/icon-cross.svg'
 import { useNavigate } from "react-router-dom"
+import { kanbanContext } from "./context/KanbanContext"
 
 
 function EditBoard(props){
-    const {statues, setData, currBoard, addBoard, setEditBoard, type, darkMode} = props
-
+    const {statues,  addBoard, setEditBoard, type} = props
+    const {state, dispatch} = useContext(kanbanContext)
     const [boardName, setBoardName] = useState('')
     const [boardColumn, setBoardColumn] = useState([
         {id: Math.floor(Math.random()*99999999),name: '', tasks: []}
@@ -14,7 +15,7 @@ function EditBoard(props){
 
     useEffect(() =>{
         if(type === 'edit'){
-            setBoardName(currBoard)
+            setBoardName(state.currBoard)
             setBoardColumn(statues)
         }
     },[type])
@@ -63,23 +64,15 @@ function EditBoard(props){
         }
     }
 
-    const handleSubmit = () =>{
+    const handleSubmit = (e) =>{
+        e.preventDefault()
         const newBoard ={
             name: boardName, 
             columns: boardColumn
         }
         //only submit if no error
         if(!errorCheck()){
-            if(type === 'edit'){
-                //replacing the current board with updated board
-                setData(prevState => prevState.map((board) =>(
-                    board.name === currBoard ? newBoard : board
-                )))
-                
-            }
-            else{
-                addBoard(newBoard)
-            }
+            dispatch({type: type === 'edit' ? "EDIT_BOARD" : 'ADD_BOARD', action:{newBoard: newBoard}})
             navigate(`/${boardName}`)
             setEditBoard(false)
         }
@@ -109,9 +102,9 @@ function EditBoard(props){
 
     return(
             <div className='taskBackground' ref={taskBg}>
-              <div className={`taskDetails ${darkMode && 'dark'}`}>
+              <div className={`taskDetails ${state.darkMode && 'dark'}`}>
                 <h4>Edit Board</h4>
-                <form action="" className="addForm" onSubmit={(e) => e.preventDefault()}>
+                <form action="" className="addForm" onSubmit={(e) => handleSubmit(e)}>
                   <div className="inputContainer">
                     <label htmlFor="boardName">Board Name</label>
                     <input autoComplete="off" placeholder={error ? 'please enter Board name':"e.g Web design"} 
@@ -135,7 +128,7 @@ function EditBoard(props){
                     <button className={`addSubtaskBtn pointer`} 
                     onClick={handleAddColumn}>+Add New Column</button>
                   </div>
-                    <button className="addSubtaskBtn pointer subtmitBtn" onClick={handleSubmit}>
+                    <button className="addSubtaskBtn pointer subtmitBtn">
                         {type === 'edit' ? 'Save Change' : 'Create New Board'}
                     </button>
                 </form>

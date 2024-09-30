@@ -1,18 +1,19 @@
 import boardLogo from '/assets/icon-board.svg'
 import lightLogo from '/assets/icon-light-theme.svg'
 import darkLogo from '/assets/icon-dark-theme.svg' 
-import { useEffect, useRef, useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import {Link, useLocation} from 'react-router-dom'
 import sidebarLight from '/assets/logo-light.svg'
 import sidebarDark from '/assets/logo-dark.svg'
 import hideSidebar from '/assets/icon-hide-sidebar.svg'
+import { kanbanContext } from './context/KanbanContext'
 
 
 function BoardSelect(props){
     const taskBg = useRef(null)
-    const {data, setDarkMode, setSelectBoard,
-          setCurrBoard, currBoard, setEditBoard, 
-          setType, darkMode, width} = props
+    const {setSelectBoard,setEditBoard, 
+          setType, width} = props
+    const {state, dispatch} = useContext(kanbanContext)
     
     /* close the boardSelect or popup when click the background */
     useEffect(() =>{
@@ -41,26 +42,27 @@ function BoardSelect(props){
 
     const location = useLocation()
     useEffect(()=>{
-        setCurrBoard(decodeURIComponent(location.pathname).slice(1));
+        dispatch({type: 'SET_CURRBOARD', payload: decodeURIComponent(location.pathname).slice(1)});
     },[location])
     
     
   
     return(
         <div className={width ? 'sidebar' : 'taskBackground'} ref={taskBg}>
-          <div className={`taskDetails boardDetails ${darkMode ? 'dark' : ''}`}>
+          <div className={`taskDetails boardDetails ${state.darkMode && 'dark'}`}>
             <div className="boardDetailsContainer">
             {width ? 
             <div className="logoContainer">
-              <img src={darkMode ? sidebarLight : sidebarDark} alt="" className='sidebarLogo'/>
+              <img src={state.darkMode ? sidebarLight : sidebarDark} alt="" className='sidebarLogo'/>
             </div> 
             : ''}
 
-            <h4>All Boards({data.length})</h4>
+            <h4>All Boards({state.boards.length})</h4>
             <ul className='boardsList'>
-              {data.map((board) =>(
+              {state.boards && state.boards.map((board) =>(
                 <Link to={`/${board.name}`}>
-                <li className={board.name == currBoard ? 'boardList boardActive' : 'boardList'} onClick={() => setCurrBoard(board.name)}>
+                <li className={board.name === state.currBoard ? 'boardList boardActive' : 'boardList'} 
+                  onClick={() => dispatch({type:"SET_CURRBOARD" ,payload: board.name})}>
                   <img src={boardLogo} alt="" />
                   {board.name}
                 </li>
@@ -72,12 +74,12 @@ function BoardSelect(props){
               </li>
             </ul>
             
-            </div>
+          </div>
             <div className="darkModeContainer">
               <div className="darkModeBtn">
                 <img src={lightLogo} alt="" />
                 <label className='switch pointer'>
-                  <input type="checkbox" className='checkbox' onChange={() => setDarkMode(prevState => !prevState)}/>
+                  <input type="checkbox" className='checkbox' onChange={() => dispatch({type:'SET_DARKMODE'})}/>
                   <span className="toggle"></span>
                 </label>
                 <img src={darkLogo} alt="" />

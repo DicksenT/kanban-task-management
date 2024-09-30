@@ -1,17 +1,18 @@
-import { useEffect, useRef, useState } from "react"
+import { useContext, useEffect, useRef, useState } from "react"
 import ellipsis from '/assets/icon-vertical-ellipsis.svg'
 import chevronDown from '/assets/icon-chevron-down.svg'
 import chevronUp from '/assets/icon-chevron-up.svg'
 import Confirm from "./Confim"
 import ManageTask from "./ManageTask"
+import { kanbanContext } from "./context/KanbanContext"
 
 function Board(props){
-    const {data, handleSubtaskClick, handleChangeStatus, 
-        statues, handleDelete, handleEdit, 
-        darkMode, width, setEditBoard, setType} = props
+    const {data, handleChangeStatus, 
+        statues,  width, setEditBoard, setType} = props
     const [taskClicked, setTaskClicked] = useState(false)
     const taskDetails= useRef(null)
     const [currentTask, setCurrentTask] = useState()
+    const {state, dispatch} = useContext(kanbanContext)
 
     const openTask = (task) =>{
         setTaskClicked(true)
@@ -56,11 +57,11 @@ function Board(props){
     <>
     <ul className="statusList" style={{width: data.columns.length === 0 && '100%'}}>
             {data.columns.length > 0 ? data.columns.map((column) =>(
-                <li className={`status ${darkMode ? 'darkStatus' : ''}`}>
+                <li className={`status ${state.darkMode && 'darkStatus'}`}>
                     <h2>{column.name} ({column.tasks.length})</h2>
                     <ul className="tasks">
                         {column.tasks.map((task) =>(
-                            <li className={`task ${darkMode ? 'dark' : ''}`} onClick={() => openTask(task, column.name)}>
+                            <li className={`task ${state.darkMode && 'dark'}`} onClick={() => openTask(task, column.name)}>
                                 <h3 className="title">
                                     {task.title}
                                 </h3>
@@ -69,9 +70,7 @@ function Board(props){
                                 </h4>
                                 {taskClicked && task.title == currentTask ? 
                                     <div className="taskBackground" ref={taskDetails}>
-                                        <div className={`taskDetails ${darkMode ? 'dark' : ''}`} >
-
-
+                                        <div className={`taskDetails ${state.darkMode && 'dark'}`} >
                                             <div className="taskTitle">
                                                 <h3 className="title">{task.title}</h3>
                                                 <div className="taskSetting" ref={ellipsisRef}>
@@ -80,15 +79,13 @@ function Board(props){
                                                         <p onClick={() => setEditTask(true)}>Edit</p>
                                                         <p onClick={() => setDeleteTask(true)} className="red">Delete</p>
                                                     </div>}
-                                                    
                                                 </div>
                                             </div>
 
                                             {editTask && <ManageTask type='edit' statues={statues} 
-                                                            setTask={setEditTask} data={task} status={column.name}
-                                                            handleEdit={handleEdit} darkMode={darkMode}/>}
+                                                            setTask={setEditTask} data={task} status={column.name}/>}
                                         
-                                            {deleteTask && <Confirm darkMode={darkMode} data={task} column={column.name} handleDelete={handleDelete} setTask={setTaskClicked}
+                                            {deleteTask && <Confirm data={task} column={column.name} setTask={setTaskClicked} 
                                             setConfirm={setDeleteTask}/>}
 
                                             {task.description && <p className="taskDescription">
@@ -102,15 +99,13 @@ function Board(props){
                                                     {task.subtasks.filter(task => task.isCompleted == true).length} of {task.subtasks.length}
                                                     )
                                                 </h4>
-
-
                                                 <ul className="subtasks">
                                                     {task.subtasks.map((subtask) => (
                                                         <label className={`subtask ${darkMode ? 'darkCheckBox' : ''}`}>
                                                             <input type="checkbox"
                                                             checked={subtask.isCompleted}
-                                                            onChange={() => handleSubtaskClick(column.name, task.title, subtask.title)} />
-                                                            <h4 className={subtask.isCompleted ? 'complete' : ''}>{subtask.title}</h4>
+                                                            onChange={() => dispatch({type:'CHANGE_SUBTASK', payload:{currColumn:column.name, currTask:task.title, currSubtask: subtask.title}})} />
+                                                            <h4 className={subtask.isCompleted && 'complete'}>{subtask.title}</h4>
                                                         </label>
                                                     ))}
                                                 </ul>

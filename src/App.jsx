@@ -19,10 +19,10 @@ function App() {
     const getData = async() =>{
       try{
         const response = await fetch('https://kanban-task-management-web-app-86h6.onrender.com/kanban')
-        const json = response.json()
+        const json = await response.json()
         if(response.ok){
           dispatch({type:'SET_DATA', payload:json})
-          console.log(state);
+          console.log(state.boards);
           
         }
       }
@@ -32,50 +32,15 @@ function App() {
     }
     getData()
   },[])
-  useEffect(() =>{
-    setData(data)
 
-  },[data])
 
-  const [currBoard, setCurrBoard] = useState()
+  useEffect(()=>{
+    if(state.boards){
+    console.log(state.boards);
+    }
+  },[state])
 
   /* List of all Function where it mapped Json to change the value */
-  const handleSubtaskClick = (currColumn, currTask, currSubtask) =>{
-    const updatedData = data.map((board) =>{
-      if (board.name == currBoard){
-        return{
-          ...board,
-          columns: board.columns.map(column =>{
-            if (column.name == currColumn){
-              return{
-                ...column,
-                tasks: column.tasks.map(task =>{
-                  if(task.title == currTask){
-                    return{
-                      ...task,
-                      subtasks: task.subtasks.map(subtask => {
-                        if(subtask.title == currSubtask){
-                          return{
-                            ...subtask,
-                            isCompleted: !subtask.isCompleted
-                          }
-                        }
-                        return subtask
-                      })
-                    }
-                  }
-                  return task
-                })
-              }
-            }
-            return column
-          })
-        }
-      }
-      return board
-    })
-    setData(updatedData)
-  }
 
   const handleChangeStatus = (newStatus, currStatus, selectTask) =>{   
     const updatedData = data.map((board) =>{
@@ -104,76 +69,6 @@ function App() {
     setData(updatedData)
   }
 
-
-  const handleAddTask = (currColumn, newTask) =>{
-    const updatedData = data.map((board)=>{
-      if(board.name === currBoard){
-        return{
-          ...board,
-          columns: board.columns.map((column) =>{
-            if(column.name === currColumn){
-              return{
-                ...column,
-                tasks: [...column.tasks, newTask]
-              }
-            }
-            return column
-          })
-        }
-      }
-      return board
-    })
-    setData(updatedData)
-  }
-  
-  const handleDelete = (currColumn, currTask) =>{
-    const updatedData = data.map((board)=>{
-      if(board.name === currBoard){
-        return{
-        ...board,
-        columns: board.columns.map((column) =>{
-          if(column.name === currColumn){
-            return{
-              ...column,
-              tasks: column.tasks.filter(task => task !== currTask)
-            }
-          }
-          return column
-        })
-        }
-      }
-      return board
-    })
-    setData(updatedData)
-  }
-  const handleEdit = (currColumn, newTask, currTask) =>{
-    console.log(currTask);
-    const updatedData = data.map((board) =>{
-      if(board.name === currBoard){
-        return{
-          ...board,
-          columns: board.columns.map((column)=>{
-            if(column.name === currColumn){
-              return{
-                ...column,
-                tasks: column.tasks.map((task) =>{
-                  if(task.title === currTask.title){
-                    return newTask
-                    
-                  }
-                  return task
-                })
-              }
-            }
-            return column
-          })
-        }
-      }
-      return board
-    })
-    setData(updatedData)
-  }
-
   /* get all column or status on currBoard */
   const [statues, setStatues] = useState()
   useEffect(() =>{    
@@ -181,7 +76,7 @@ function App() {
       const statusList = []
       if(data){
         data.map(board =>{
-          if(board.name === currBoard){
+          if(board.name === state.currBoard){
             board.columns.forEach((column) =>{
               statusList.push(column)
             })
@@ -192,26 +87,22 @@ function App() {
       setStatues(statusList) 
     }
     getStatues()     
-  },[data, currBoard])
+  },[data, state.currBoard])
 
-  const addBoard = (newBoard) =>{
-    setData([...data, newBoard])   
-  }
 
   const [editBoard, setEditBoard] = useState(false)
   const [selectBoard, setSelectBoard] = useState(false)
-  const [darkMode, setDarkMode] = useState(false)
   const [type, setType] = useState()
   const [deleteBoard, setDeleteBoard] = useState(false)
 
   useEffect(() =>{
-    if(darkMode){
+    if(state.darkMode){
       document.body.classList.add('darkBg')
     }
     else{
       document.body.classList.remove('darkBg')
     }
-  },[darkMode])
+  },[state.darkMode])
 
   /* Update the width when window resizing */
   const [width, setWidth] = useState(window.innerWidth)
@@ -247,8 +138,6 @@ function App() {
     scrollLeft.current = containerRef.current.scrollLeft
     scrollTop.current = containerRef.current.scrollTop
     containerRef.current.style.cursor = 'grabbing'
-    console.log(startX);
-    
   }
   const handleMouseUp = () =>{
     isDragging.current = false
@@ -274,14 +163,10 @@ function App() {
     <Router>
     {/* sidebar or boardSelect located here because >768 px layout */}
     <div className="sidebarAndMain">     
-    {selectBoard && <BoardSelect data={data} 
-                        setCurrBoard={setCurrBoard}
-                        currBoard={currBoard}
-                        setDarkMode={setDarkMode} 
+    {selectBoard && <BoardSelect 
                         setSelectBoard={setSelectBoard}
                         setEditBoard={setEditBoard}
                         setType={setType}
-                        darkMode={darkMode}
                         width={width >= 768}
                         />}
 
@@ -289,13 +174,9 @@ function App() {
       <Header setSelectBoard={setSelectBoard} 
               setEditBoard={setEditBoard} 
               setAddTask={setAddTask}
-              setDarkMode={setDarkMode}
-              currBoard={currBoard}
               selectBoard={selectBoard}
-              setCurrBoard={setCurrBoard}
               setType={setType}
-              setDeleteBoard={setDeleteBoard}
-              darkMode={darkMode}
+              setDeleteBoard={setDeleteBoard} 
               width={width}/>
               
       
@@ -303,26 +184,17 @@ function App() {
       onMouseMove={handleMouseMove}>
           <section className='boards'>
         <Routes>
-
-          <Route exact path='/' element={<Navigate replace to={`/${currBoard}`}/>}/>
-
+          <Route exact path='/' element={<Navigate replace to={`/${state.currBoard}`}/>}/>
         {/* mapped data so each board get the path based on their name */}
-        {data && data.map((board) =>(
+        {state.boards && state.boards.map((board) =>(
           <Route key={board.name} path={`/${board.name}`} 
             element={
-            <Board data={board} 
-            handleSubtaskClick={handleSubtaskClick} 
-            handleChangeStatus={handleChangeStatus}
-            handleDelete={handleDelete}
-            handleEdit={handleEdit}
-            statues = {statues}
-            darkMode={darkMode}
-            width={width}
-            setEditBoard={setEditBoard}
-            setType={setType}/>}/>
-            
-              
-        ))}
+              <Board data={board} 
+              handleChangeStatus={handleChangeStatus}
+              statues = {statues}
+              width={width}
+              setEditBoard={setEditBoard}
+              setType={setType}/>}/>))}
         </Routes>
         </section>
         {selectBoard || width < 768 ? '':
@@ -332,21 +204,16 @@ function App() {
       </main>
       </div>
 
-      {/*Bunch of click popup, should be okay to put it anywhere */}
+      {/*Bunch of conditional rendering pop-up, should be okay to put it anywhere */}
       {editBoard && <EditBoard statues={statues} 
-                    setData={setData} currBoard={currBoard}
                     addBoard={addBoard}
                     setEditBoard={setEditBoard}
                     type={type}
-                    darkMode={darkMode}
                     />}
       
       {addTask && statues && <ManageTask type='add' statues={statues} 
-      setTask={setAddTask} handleAddTask={handleAddTask} darkMode={darkMode}/>}
-      {deleteBoard && <Confirm type={'board'} 
-                      currBoard={currBoard} data={data} setData={setData} 
-                      setConfirm={setDeleteBoard}
-                      darkMode={darkMode}/>}
+      setTask={setAddTask}/>}
+      {deleteBoard && <Confirm type={'board'} setConfirm={setDeleteBoard}/>}
     </div>
     </Router>
   )

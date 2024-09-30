@@ -4,24 +4,38 @@ import { createContext, useReducer } from "react";
 export const kanbanContext = createContext()
 
 const kanbanReducer = (state, action) =>{
+    const {payload} = action
     switch (action.type){
         case 'SET_DATA':
             return{
-            boards: action.payload
+            ...state,
+            boards: payload
         }
+
+        case 'SET_DARKMODE':
+            return{
+                ...state,
+                darkMode: !state.darkMode
+            }
+
+        case 'SET_CURRBOARD':
+            return{
+                ...state,
+                currBoard: payload
+            }
 
         case 'ADD_BOARD':
             return{
-                boards: [...state.boards, action.payload]
+                boards: [...state.boards, payload]
             }
 
         case 'EDIT_BOARD':
-            const {newBoard} = action.payload
             return{
+                ...state,
                 boards: state.boards.map((board) =>{
-                    if(board.name === currBoard){
+                    if(board.name === state.currBoard){
                         return{
-                            board: newBoard
+                            board: payload
                         }
                     }
                     return board
@@ -30,16 +44,18 @@ const kanbanReducer = (state, action) =>{
 
         case 'DEL_BOARD':
             return{
-                boards: state.boards.filter(board => board.name != action.payload)
+                ...state,
+                boards: state.boards.filter(board => board.name != payload)
             }
 
         case 'ADD_COLUMN':
             return{
+                ...state,
                 boards: state.boards.map((board) =>{
-                    if(board.name === currBoard){
+                    if(board.name === state.currBoard){
                         return{
                             ...board,
-                            columns: [...state.columns,action.payload]
+                            columns: [...state.columns,payload]
                         }
                     }
                     return board
@@ -47,17 +63,17 @@ const kanbanReducer = (state, action) =>{
             }
 
         case 'ADD_TASK':{
-            const {currBoard, currColumn, newTask} = action.payload
             return{
+                ...state,
                 boards: state.boards.map((board) =>{
-                    if(board.name === currBoard){
+                    if(board.name === state.currBoard){
                         return{
                             ...board,
                             columns: board.columns.map((column)=>{
-                                if(column.name === currColumn){
+                                if(column.name === payload.currColumn){
                                     return{
                                         ...column,
-                                        tasks: [...column.task, newTask]
+                                        tasks: [...column.task, payload.newTask]
                                     }
                                 }
                                 return column
@@ -70,17 +86,17 @@ const kanbanReducer = (state, action) =>{
         }
 
         case 'DEL_TASK':
-            const {currBoard, currColumn, delTask} = action.payload
             return{
+                ...state,
                 boards: state.boards.map((board) =>{
-                    if(board.name === currBoard){
+                    if(board.name === state.currBoard){
                         return{
                             ...board,
                             columns: board.columns.map((column) =>{
-                                if(column.name === currColumn){
+                                if(column.name === payload.currColumn){
                                     return{
                                         ...columns,
-                                        tasks: column.task.filter((task) => task.name != delTask)
+                                        tasks: column.task.filter((task) => task.name != payload.delTask)
                                     }
                                 }
                                 return column
@@ -93,18 +109,19 @@ const kanbanReducer = (state, action) =>{
 
         case 'EDIT_TASK':
             return{
+                ...state,
                 boards: state.boards.map((board) =>{
-                    if(board.name === currBoard){
+                    if(board.name === state.currBoard){
                         return{
                             ...board,
                             columns: board.columns.map((column) =>{
-                                if(column.name === currColumn){
+                                if(column.name === payload.currColumn){
                                     return{
                                         ...columns,
                                         tasks: column.task.map((task) =>{
-                                            if(task.name === currTask){
+                                            if(task.name === payload.currTask){
                                                 return{
-                                                    task: newTask
+                                                    task: payload.newTask
                                                 }
                                             }
                                             return task
@@ -120,21 +137,23 @@ const kanbanReducer = (state, action) =>{
             }
 
         case 'CHANGE_SUBTASK':
+
             return{
+                ...state,
                 boards: state.boards.map((board) =>{
-                    if(board.name === currBoard){
+                    if(board.name === state.currBoard){
                         return{
                             ...board,
                             columns: board.columns.map((column) =>{
-                                if(column.name === currColumn){
+                                if(column.name === payload.currColumn){
                                     return{
                                         ...column,
                                         tasks: column.tasks.map((task) =>{
-                                            if(task.title === currTask){
+                                            if(task.title === payload.currTask){
                                                 return{
                                                     ...task,
                                                     subtasks: task.subtasks.map((subtask) =>{
-                                                        if(subtask.title === currSubtask){
+                                                        if(subtask.title === payload.currSubtask){
                                                             return{
                                                                 ...subtask,
                                                                 isCompleted: !subtask.isCompleted
@@ -165,7 +184,8 @@ const kanbanReducer = (state, action) =>{
 export const KanbanContextProvider = ({children}) =>{
 const [state, dispatch] = useReducer(kanbanReducer, {
     boards:[],
-    currBoard: null
+    currBoard: null,
+    darkMode: false
 })
 
     return(
