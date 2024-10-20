@@ -9,7 +9,7 @@ function EditBoard(props){
     const {state, dispatch} = useContext(kanbanContext)
     const [boardName, setBoardName] = useState('')
     const [boardColumn, setBoardColumn] = useState([
-        {id: Math.floor(Math.random()*99999999),name: '', tasks: []}
+        {name: '', tasks: []}
     ])
 
 
