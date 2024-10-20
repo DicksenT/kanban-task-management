@@ -22,8 +22,6 @@ function App() {
         const json = await response.json()
         if(response.ok){
           dispatch({type:'SET_DATA', payload:json})
-          console.log(state.boards);
-          
         }
       }
       catch(e){
@@ -32,13 +30,6 @@ function App() {
     }
     getData()
   },[])
-
-
-  useEffect(()=>{
-    if(state.boards){
-    console.log(state.boards);
-    }
-  },[state])
 
   /* List of all Function where it mapped Json to change the value */
 
@@ -74,8 +65,8 @@ function App() {
   useEffect(() =>{    
     const getStatues = () =>{
       const statusList = []
-      if(data){
-        data.map(board =>{
+      if(state.data){
+        state.data.map(board =>{
           if(board.name === state.currBoard){
             board.columns.forEach((column) =>{
               statusList.push(column)
@@ -87,7 +78,7 @@ function App() {
       setStatues(statusList) 
     }
     getStatues()     
-  },[data, state.currBoard])
+  },[state.data, state.currBoard])
 
 
   const [editBoard, setEditBoard] = useState(false)

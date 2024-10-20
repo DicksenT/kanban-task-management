@@ -3,13 +3,13 @@ import chevronDown from '/assets/icon-chevron-down.svg'
 import { useContext, useEffect, useRef, useState } from 'react'
 import { kanbanContext } from './context/KanbanContext'
 function ManageTask(props){
-    const {type, statues, setTask, data, status, } = props
+    const {type, statues, setTask, data, status} = props
     const {state, dispatch} = useContext(kanbanContext)
     const [openStatusSelect, setOpenStatusSelect] = useState(false)
     const [title, setTitle] = useState('')
     const [description, setDescription] = useState('')
     const [subtasks, setSubtasks] = useState([
-      {id:Math.floor(Math.random() * 9999999) , title: '', isCompleted: false, first: true}
+      {title: '', isCompleted: false}
     ])
     const [currStatus, setCurrStatus] = useState()
 
@@ -41,7 +41,7 @@ function ManageTask(props){
     },[type])
     
     const checkEmpty = () =>{
-      if(subtasks.length > 0 && subtasks[subtasks.length - 1].title === ''){
+      if(subtasks.length > 1 && subtasks[subtasks.length - 1].title === ''){
         return true
       }
       return false
@@ -49,7 +49,7 @@ function ManageTask(props){
 
     const addSubtask = () =>{
       if(!checkEmpty()){
-        const newSubtask = {id:Math.floor(Math.random() * 9999999), title: '', isCompleted:false, first: false}
+        const newSubtask = {title: '', isCompleted:false}
         setSubtasks([...subtasks, newSubtask])
       }
      

@@ -68,6 +68,8 @@ function Board(props){
                                 <h4 className="subtasksNum">
                                     {task.subtasks.filter(task => task.isCompleted == true).length} of {task.subtasks.length} subtasks
                                 </h4>
+
+                                
                                 {taskClicked && task.title == currentTask ? 
                                     <div className="taskBackground" ref={taskDetails}>
                                         <div className={`taskDetails ${state.darkMode && 'dark'}`} >
@@ -126,8 +128,10 @@ function Board(props){
                                                 
                                             </div>
                                         </div>
-                                    </div> : 
-                                    ''}
+                                    </div> 
+                                    : 
+                                    ''
+                                }
                             </li>
                         ))}
                     </ul>
