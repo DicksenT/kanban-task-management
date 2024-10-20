@@ -62,7 +62,7 @@ const kanbanReducer = (state, action) =>{
                 })
             }
 
-        case 'ADD_TASK':{
+        case 'ADD_TASK':
             return{
                 ...state,
                 boards: state.boards.map((board) =>{
@@ -83,7 +83,7 @@ const kanbanReducer = (state, action) =>{
                     return board
                 })
             }
-        }
+        
 
         case 'DEL_TASK':
             return{
@@ -187,6 +187,38 @@ const [state, dispatch] = useReducer(kanbanReducer, {
     currBoard: null,
     darkMode: false
 })
+
+useEffect(() =>{
+    const fetchData = async()=>{
+        try{
+            const response = await fetch('https://kanban-task-management-web-app-86h6.onrender.com/board/getData',{
+                credentials: "include"
+            })
+            const json = await response.json()
+            if(response.ok){
+                dispatch({type:'SET_DATA', payload:json})
+            }
+        }catch{
+            try{
+                const refresh = await fetch('https://kanban-task-management-web-app-86h6.onrender.com/user/refreshToken',
+                    {credentials: "include"}
+                )
+                if(refresh.ok){
+                    const response = await fetch('https://kanban-task-management-web-app-86h6.onrender.com/board/getData',
+                        {credentials: "include"}
+                    )
+                    const json = await response.json()
+                    if(response.ok){
+                        dispatch({type:'SET_DATA', payload:json})
+                    }
+                }
+            }catch{
+                console.log('User unauthorized or session expired, please login or signup');
+            }
+        }
+    }
+    fetchData()
+},[])
 
     return(
         <kanbanContext.Provider value={{state, dispatch}}>
