@@ -15,22 +15,6 @@ function App() {
   const [data, setData] = useState()
   const [addTask, setAddTask] = useState(false)
 
-  useEffect(()=>{
-    const getData = async() =>{
-      try{
-        const response = await fetch('https://kanban-task-management-web-app-86h6.onrender.com/kanban')
-        const json = await response.json()
-        if(response.ok){
-          dispatch({type:'SET_DATA', payload:json})
-        }
-      }
-      catch(e){
-        console.error(e);
-      }
-    }
-    getData()
-  },[])
-
   /* List of all Function where it mapped Json to change the value */
 
   const handleChangeStatus = (newStatus, currStatus, selectTask) =>{   
@@ -66,8 +50,8 @@ function App() {
     const getStatues = () =>{
       const statusList = []
       if(state.data){
-        state.data.map(board =>{
-          if(board.name === state.currBoard){
+        state.data.forEach(board =>{
+          if(board.name === state.currBoard.name){
             board.columns.forEach((column) =>{
               statusList.push(column)
             })
@@ -84,7 +68,7 @@ function App() {
   const [editBoard, setEditBoard] = useState(false)
   const [selectBoard, setSelectBoard] = useState(false)
   const [type, setType] = useState()
-  const [deleteBoard, setDeleteBoard] = useState(false)
+  
 
   useEffect(() =>{
     if(state.darkMode){
@@ -175,7 +159,7 @@ function App() {
       onMouseMove={handleMouseMove}>
           <section className='boards'>
         <Routes>
-          <Route exact path='/' element={<Navigate replace to={`/${state.currBoard}`}/>}/>
+          <Route exact path='/' element={<Navigate replace to={`/${state.currBoard.name}`}/>}/>
         {/* mapped data so each board get the path based on their name */}
         {state.boards && state.boards.map((board) =>(
           <Route key={board.name} path={`/${board.name}`} 
@@ -204,7 +188,7 @@ function App() {
       
       {addTask && statues && <ManageTask type='add' statues={statues} 
       setTask={setAddTask}/>}
-      {deleteBoard && <Confirm type={'board'} setConfirm={setDeleteBoard}/>}
+      
     </div>
     </Router>
   )
