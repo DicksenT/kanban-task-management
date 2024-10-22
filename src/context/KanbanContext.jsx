@@ -137,7 +137,6 @@ const kanbanReducer = (state, action) =>{
             }
 
         case 'CHANGE_SUBTASK':
-
             return{
                 ...state,
                 boards: state.boards.map((board) =>{

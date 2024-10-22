@@ -7,9 +7,10 @@ import { useLocation } from "react-router-dom"
 import logoLight from '/assets/logo-light.svg'
 import logoDark from '/assets/logo-dark.svg'
 import { kanbanContext } from "./context/KanbanContext"
+import Confirm from "./Confim"
 
 function Header(props){
-    const {setAddTask, setDeleteBoard, setEditBoard, 
+    const {setAddTask, setEditBoard, 
             setSelectBoard, selectBoard, 
             setType,  width} = props
     const [ellipsisClicked, setEllipsisClicked] = useState(false)
@@ -18,8 +19,11 @@ function Header(props){
     /* set currBoard based on url location */
     const location = useLocation()
     useEffect(()=>{
-        dispatch({type:'SET_CURRBOARD', payload:decodeURIComponent(location.pathname).slice(1)})
-    },[location])
+      const match = state.boards.find(board=>board.name === decodeURIComponent(location.pathname).slice(1))
+      if(match){ 
+        dispatch({type:'SET_CURRBOARD', payload:board})
+      }
+    },[location, state.boards])
 
     const handleEditBoard = () =>{
       setEditBoard(true)
@@ -39,24 +43,26 @@ function Header(props){
         window.removeEventListener('click', handleClick)
       }
     },[])
+
+    const [deleteBoard, setDeleteBoard] = useState(false)
     
     return(
     <>
     <header className={`${selectBoard && width < 768 ? 'zindex' : ''} ${state.darkMode && 'dark' }`}>
         <div className="left">
           {selectBoard ? 
-            <p>{state.currBoard}</p>
+            <p>{state.currBoard.name}</p>
           :
           (width >= 768 ?
             (<div className="headerLogo">
             <img onClick={() => setSelectBoard(true)} className="headerImg" src={state.darkMode ? logoLight : logoDark} alt="" />
-            <p>{state.currBoard}</p>
+            <p>{state.currBoard.name}</p>
             </div>)
             :
             <>
           <img src={mobileLogo} alt="" />
           <div className='currentBoard' onClick={() =>setSelectBoard(prevState =>!prevState)}>
-            <p>{state.currBoard}</p>
+            <p>{state.currBoard.name}</p>
             <img src={chevronDown} alt="" />
           </div> 
           </>
@@ -80,6 +86,8 @@ function Header(props){
           </div>
         </div>
       </header>
+
+      {deleteBoard && <Confirm type='board' setConfirm={setDeleteBoard}/>}
       </>
     )
 }
