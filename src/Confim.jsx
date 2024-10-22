@@ -5,13 +5,53 @@ function Confirm(props){
     const {column, data,  setTask, setConfirm, type} = props
     const {state, dispatch} = useContext(kanbanContext)
 
-    const deleteTask = () =>{
+    const deleteTask = async() =>{
+        const fetchUrl = async(url) =>{
+            try{
+                const response = await fetch(url,
+                    {credentials:"include",
+                        method:'DELETE'
+                    }
+                )
+                if(response.ok){
+                    return true
+                }
+            }catch{
+                try{
+                    const refresh = await fetch('https://kanban-task-management-web-app-86h6.onrender.com/user/refreshToken',
+                        {credentials:'include'}
+                    )
+                    if(refresh.ok){
+                        const response = await fetch(url,
+                            {credentials:"include",
+                                method:"DELETE"
+                            }
+                        )
+                        if (response.ok){
+                            return true
+                        }
+                    }
+
+                }catch{
+                    console.log('failed');
+                }
+            }
+            return false
+        }
         if(type != 'board'){
-            dispatch({type:"DEL_TASK", payload:{currColumn:column, delTask:data}})
+            const taskUrl =`https://kanban-task-management-web-app-86h6.onrender.com/task/${data._id}`
+            const response = await fetchUrl(taskUrl)
+            if(response.ok){
+                dispatch({type:'DEL_TASK', payload:{currColumn:column, delTask:data.name}})
+            }
             setTask(false)
         }
         else{
-            dispatch({type:"DEL_BOARD"})
+            const boardUrl = `https://kanban-task-management-web-app-86h6.onrender.com/board/${state.currBoard._id}`
+            const response = await fetchUrl(boardUrl)
+            if(response){
+                dispatch({type:'DEL_BOARD', payload:state.currBoard.name})
+            }
         }   
         setConfirm(false)
     }

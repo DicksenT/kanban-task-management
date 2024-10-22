@@ -5,13 +5,12 @@ import { kanbanContext } from "./context/KanbanContext"
 
 
 function EditBoard(props){
-    const {statues,  addBoard, setEditBoard, type} = props
+    const {statues, setEditBoard, type} = props
     const {state, dispatch} = useContext(kanbanContext)
     const [boardName, setBoardName] = useState('')
     const [boardColumn, setBoardColumn] = useState([
         {name: '', tasks: []}
     ])
-
 
     useEffect(() =>{
         if(type === 'edit'){
@@ -29,7 +28,7 @@ function EditBoard(props){
 
     /* only delete based on id or name */
     const handleDelete = (id, name) => {
-        setBoardColumn(prevState => prevState.filter(col => 'id' in col ? col.id !== id : col.name !== name))
+        setBoardColumn(prevState => prevState.filter(col => 'id' in col ? col._id !== id : col.name !== name))
     }
 
     const [error, setError] = useState(false)
@@ -40,7 +39,7 @@ function EditBoard(props){
 
     /* check newest/latest column input if it's empty */
     const checkEmpty=() =>{
-        if(boardColumn.length > 0 && boardColumn[boardColumn.length -1].name === ''){
+        if(boardColumn.length > 1 && boardColumn[boardColumn.length -1].name === ''){
             return true
         }
         return false
@@ -64,7 +63,7 @@ function EditBoard(props){
         }
     }
 
-    const handleSubmit = (e) =>{
+    const handleSubmit = async(e) =>{
         e.preventDefault()
         const newBoard ={
             name: boardName, 
@@ -72,9 +71,45 @@ function EditBoard(props){
         }
         //only submit if no error
         if(!errorCheck()){
-            dispatch({type: type === 'edit' ? "EDIT_BOARD" : 'ADD_BOARD', action:{newBoard: newBoard}})
-            navigate(`/${boardName}`)
-            setEditBoard(false)
+            try{
+                const response = await 
+                fetch(`https://kanban-task-management-web-app-86h6.onrender.com/board/${type === 'edit' ? 
+                    `EDIT_BOARD/${state.currBoard._id}` : 'ADD_BOARD'}`,
+                    {credentials:"include",
+                        method:type === 'edit' ? 'PATCH' : 'POST',
+                        body:JSON.stringify(newBoard) 
+                    }
+                )
+                const json = await response.json()
+                if(response.ok){
+                    dispatch({type: type === 'edit' ? "EDIT_BOARD" : 'ADD_BOARD', payload:{newBoard: json}})
+                    navigate(`/${boardName}`)
+                    setEditBoard(false)
+                }
+            }catch{
+                try{
+                    const refresh = await fetch(`https://kanban-task-management-web-app-86h6.onrender.com/user/refreshToken`,
+                        {credentials:'include'})
+                    if(refresh.ok){
+                        const response = await 
+                        fetch(`https://kanban-task-management-web-app-86h6.onrender.com/board/${type === 'edit' ? 
+                            `EDIT_BOARD/${state.currBoard._id}` : 'ADD_BOARD'}`,
+                            {credentials:"include",
+                                method:type === 'edit' ? 'PATCH' : 'POST',
+                                body:JSON.stringify(newBoard)})
+                        const json = await response.json()
+                        if(response.ok){
+                            dispatch({type: type === 'edit' ? "EDIT_BOARD" : 'ADD_BOARD', payload:{newBoard: json}})
+                            navigate(`/${boardName}`)
+                            setEditBoard(false)
+                        }
+                    }
+                }catch{
+                    console.log('failed');
+                    
+                }
+            }
+            
         }
     }
 
@@ -121,7 +156,7 @@ function EditBoard(props){
                             onChange={(e) => handleName(status.id, e.currentTarget.value)}
                             className={subError && 'error'} placeholder={subError ? 'Please Enter Column name or remove Column': ''}
                             onClick={() => setSubError(false)}/>
-                            <img src={cross} className="pointer" alt="" onClick={() => handleDelete(status.id, status.name)} />
+                            <img src={cross} className="pointer" alt="" onClick={() => handleDelete(status._id, status.name)} />
                         </li>
                       ))}
                     </ul>

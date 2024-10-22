@@ -72,7 +72,7 @@ function ManageTask(props){
       }
     }
 
-    const handleSubmit = (e) =>{
+    const handleSubmit = async(e) =>{
       e.preventDefault()
       const newTask = {
         title: title,
@@ -80,15 +80,40 @@ function ManageTask(props){
         subtasks: subtasks
       }
       if(!errorCheck()){
-        if(type === 'edit'){
-          dispatch({type:"EDIT_TASK", payload:{currColumns: currStatus, currTask: data, newTask: newTask}})
-        }
-        else{
-          dispatch({type:"ADD_TASK", payload:{currColumns: currStatus, newTask:newTask}})
-        }
-        setTask(false)
+        try{
+          const response = await fetch(`https://kanban-task-management-web-app-86h6.onrender.com/task/${type === 'edit' ?
+            `editTask/${data._id}` : 'addTask'
+          }`,{credentials:'include',
+            method:type === 'edit' ? 'PATCH' : 'POST',
+            body:JSON.stringify(newTask)
+          })
+          const json = await response.json()
+          if(response.ok){
+            dispatch({type:"EDIT_TASK", payload:{currColumns: currStatus, currTask: data, newTask: json}})
+            setTask(false)
+          } 
+        }catch{
+          try{
+            const refresh = await fetch('https://kanban-task-management-web-app-86h6.onrender.com/userAuth/refreshToken',
+            {credentials:"include"})
+            if(refresh.ok){
+              const response = await fetch(`https://kanban-task-management-web-app-86h6.onrender.com/task/${type === 'edit' ?
+                `editTask/${data._id}` : 'addTask'
+              }`,{credentials:'include',
+                method:type === 'edit' ? 'PATCH' : 'POST',
+                body:JSON.stringify(newTask)
+              })
+              const json = await response.json()
+              if(response.ok){
+                dispatch({type:"EDIT_TASK", payload:{currColumns: currStatus, currTask: data, newTask: json}})
+                setTask(false)
+              } 
+            }
+          }catch{
+            console.log('failed');
+          }
+        } 
       }
-      
     }
 
    
@@ -103,7 +128,7 @@ function ManageTask(props){
     }
  
     const handleDelete = (id, title) =>{
-      setSubtasks(prevState => prevState.filter(subtask => 'id' in subtask ? subtask.id !== id : subtask.title !== title))
+      setSubtasks(prevState => prevState.filter(subtask => 'id' in subtask ? subtask._id !== id : subtask.title !== title))
     }
 
     const [subtaskEmpty, setSubtaskEmpty] = useState(false)
