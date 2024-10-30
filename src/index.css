@@ -241,7 +241,8 @@ li{
   background-color: #e4ebfa;
   color: #635fc7;
   border-radius: 24px;
-  font-weight: 900;
+  font-weight: 900;  
+  transition: .4s;
 }
 .otherStatus,
 .statusTask .statusClick{
@@ -547,6 +548,59 @@ a{
 }
 .decline{
   cursor: no-drop;
+}
+.loginFormContainer{
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.loginContainer{
+  background-color: white;
+  height: 328px;
+  width: 280px;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  justify-content: space-between;
+  border-radius: 4px;
+}
+.loginContainer input{
+  background-color: #f4f7fd;
+  border: 1px solid #f4f7fd;
+  border-radius: 12px;
+  padding: 8px;
+  outline: none;
+  transition: .4s;
+  margin-top: 12px;
+}
+
+.loginContainer input:focus{
+  border-color: #828fa3;
+}
+
+.loginContainer .addSubtaskBtn{
+  margin-top: 24px;
+}
+.loginContainer .addSubtaskBtn:hover{
+  background-color: #635fc7;
+  color: #e4ebfa;
+
+}
+.loginContainer .changeType{
+  text-align: center;
+}
+.loginContainer .changeType span{
+  color: #635fc7;
+  cursor: pointer;
+}
+.loginP{
+  visibility: hidden;
+}
+.loginError{
+  visibility: visible;
+  color: #ea5555;
+  font-size: 14px;
 }
 @keyframes sidebarAnimate {
   from{
