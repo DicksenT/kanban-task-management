@@ -1,17 +1,19 @@
 import { useContext, useEffect, useRef, useState } from 'react'
-import Board from './Board'
-import axios from 'axios'
+import Board from './pages/Board'
 import {useLocation,Link,Navigate,BrowserRouter as Router, Route, Routes} from 'react-router-dom'
-import EditBoard from './EditBoard'
-import BoardSelect from './BoardSelect'
-import ManageTask from './ManageTask'
-import Header from './Header'
-import Confirm from './Confim'
+import EditBoard from './component/EditBoard'
+import BoardSelect from './component/BoardSelect'
+import ManageTask from './component/ManageTask'
+import Header from './component/Header'
 import openSide from '/assets/icon-show-sidebar.svg'
 import { kanbanContext } from './context/KanbanContext'
+import { authContext } from './context/AuthContext'
+import LoginForm from './pages/LoginForm'
+import Dashboard from './pages/Dashboard'
 
 function App() {
   const {state, dispatch} = useContext(kanbanContext)
+  const {state: userState} = useContext(authContext)
   const [data, setData] = useState()
   const [addTask, setAddTask] = useState(false)
 
@@ -136,8 +138,9 @@ function App() {
 
   return (
     <Router>
+    
     {/* sidebar or boardSelect located here because >768 px layout */}
-    <div className="sidebarAndMain">     
+    {userState.user && userState.user ? <div className="sidebarAndMain">     
     {selectBoard && <BoardSelect 
                         setSelectBoard={setSelectBoard}
                         setEditBoard={setEditBoard}
@@ -150,8 +153,7 @@ function App() {
               setEditBoard={setEditBoard} 
               setAddTask={setAddTask}
               selectBoard={selectBoard}
-              setType={setType}
-              setDeleteBoard={setDeleteBoard} 
+              setType={setType} 
               width={width}/>
               
       
@@ -159,7 +161,8 @@ function App() {
       onMouseMove={handleMouseMove}>
           <section className='boards'>
         <Routes>
-          <Route exact path='/' element={<Navigate replace to={`/${state.currBoard.name}`}/>}/>
+          {<Route exact path='/' element={<Navigate replace to={`/dashboard`}/>}/>}
+          <Route path='/dashboard' element={<Dashboard setType={setType} setEditBoard={setEditBoard}/>}/>
         {/* mapped data so each board get the path based on their name */}
         {state.boards && state.boards.map((board) =>(
           <Route key={board.name} path={`/${board.name}`} 
@@ -181,7 +184,6 @@ function App() {
 
       {/*Bunch of conditional rendering pop-up, should be okay to put it anywhere */}
       {editBoard && <EditBoard statues={statues} 
-                    addBoard={addBoard}
                     setEditBoard={setEditBoard}
                     type={type}
                     />}
@@ -189,7 +191,11 @@ function App() {
       {addTask && statues && <ManageTask type='add' statues={statues} 
       setTask={setAddTask}/>}
       
-    </div>
+    </div> :
+    
+    <LoginForm/>
+    }
+    
     </Router>
   )
 }
