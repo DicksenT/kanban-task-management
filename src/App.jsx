@@ -1,6 +1,6 @@
 import { useContext, useEffect, useRef, useState } from 'react'
 import Board from './pages/Board'
-import {useLocation,Link,Navigate,BrowserRouter as Router, Route, Routes} from 'react-router-dom'
+import {Navigate,BrowserRouter as Router, Route, Routes} from 'react-router-dom'
 import EditBoard from './component/EditBoard'
 import BoardSelect from './component/BoardSelect'
 import ManageTask from './component/ManageTask'
