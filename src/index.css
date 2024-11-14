@@ -353,9 +353,15 @@ textarea{
   border-top-right-radius:60px;
   border-bottom-right-radius: 60px;
 }
-.boardActive{
+
+.boardActive,
+.dashboardSelect{
   background-color: #635fc7 !important;
   color: white;
+}
+.dashboardSelect{
+  width: 100%;
+  border-radius: 0;
 }
 .boardActive img{
   filter: brightness(0) invert(1);
@@ -601,6 +607,56 @@ a{
   visibility: visible;
   color: #ea5555;
   font-size: 14px;
+}
+.dashboardContainer{
+  height: 100%;
+}
+
+.dashboardLists{
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 8px;
+}
+.dashboardList{
+  border: 1px solid #635fc7;
+  padding: 16px 12px;
+  border-radius: 12px;
+  width: 100%;
+}
+.dashboardCreate{
+  border: 1px dashed #635fc7;
+  padding: 16px 12px;
+  border-radius: 12px;
+  width: 100%;
+}
+.boardSelect{
+  overflow: auto;
+  max-height: 140px;
+}
+.userDropdown{
+  font-size: 13px;
+  border: 1px solid #635fc7;
+  padding: 4px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+}
+.userDropdown:hover{
+  background-color: #635fc7;
+  color: white;
+}
+.userClick{
+  position: absolute;
+  background-color: white;
+  width: 100%;
+  left: 0;
+  top: 32px;
+  padding: 8px;
+  box-shadow: 0px 8px 40px 0px rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  font-weight: bold;
+  text-align: center;
 }
 @keyframes sidebarAnimate {
   from{
