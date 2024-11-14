@@ -1,4 +1,5 @@
-import { createContext, useReducer } from "react";
+import { createContext, useEffect, useReducer } from "react";
+import useGetData from "../Hooks/UseGetData";
 
 
 export const kanbanContext = createContext()
@@ -33,10 +34,8 @@ const kanbanReducer = (state, action) =>{
             return{
                 ...state,
                 boards: state.boards.map((board) =>{
-                    if(board.name === state.currBoard){
-                        return{
-                            board: payload
-                        }
+                    if(board.name === state.currBoard.name){
+                        return payload
                     }
                     return board
                 })
@@ -52,7 +51,7 @@ const kanbanReducer = (state, action) =>{
             return{
                 ...state,
                 boards: state.boards.map((board) =>{
-                    if(board.name === state.currBoard){
+                    if(board.name === state.currBoard.name){
                         return{
                             ...board,
                             columns: [...state.columns,payload]
@@ -66,14 +65,15 @@ const kanbanReducer = (state, action) =>{
             return{
                 ...state,
                 boards: state.boards.map((board) =>{
-                    if(board.name === state.currBoard){
+                    if(board.name === state.currBoard.name){
                         return{
                             ...board,
+                            totalTask: board.totalTask+1,
                             columns: board.columns.map((column)=>{
                                 if(column.name === payload.currColumn){
                                     return{
                                         ...column,
-                                        tasks: [...column.task, payload.newTask]
+                                        tasks: [...column.tasks, payload.newTask]
                                     }
                                 }
                                 return column
@@ -89,14 +89,17 @@ const kanbanReducer = (state, action) =>{
             return{
                 ...state,
                 boards: state.boards.map((board) =>{
-                    if(board.name === state.currBoard){
+                    if(board.name === state.currBoard.name){
                         return{
                             ...board,
+                            totalTask: board.totalTask-1,
                             columns: board.columns.map((column) =>{
                                 if(column.name === payload.currColumn){
+                                    console.log(column + ' and ' + payload.delTask);
+                                    
                                     return{
-                                        ...columns,
-                                        tasks: column.task.filter((task) => task.name != payload.delTask)
+                                        ...column,
+                                        tasks: column.tasks.filter((task) => task.name != payload.delTask)
                                     }
                                 }
                                 return column
@@ -107,22 +110,20 @@ const kanbanReducer = (state, action) =>{
                 })
             }
 
-        case 'EDIT_TASK':
+        case 'EDIT_TASK':            
             return{
                 ...state,
                 boards: state.boards.map((board) =>{
-                    if(board.name === state.currBoard){
+                    if(board.name === state.currBoard.name){
                         return{
                             ...board,
                             columns: board.columns.map((column) =>{
                                 if(column.name === payload.currColumn){
                                     return{
-                                        ...columns,
-                                        tasks: column.task.map((task) =>{
-                                            if(task.name === payload.currTask){
-                                                return{
-                                                    task: payload.newTask
-                                                }
+                                        ...column,
+                                        tasks: column.tasks.map((task) =>{
+                                            if(task._id === payload.currTask._id){
+                                                return payload.newTask
                                             }
                                             return task
                                         })
@@ -136,11 +137,39 @@ const kanbanReducer = (state, action) =>{
                 })
             }
 
-        case 'CHANGE_SUBTASK':
+        case 'CHANGE_STATUS':
             return{
                 ...state,
                 boards: state.boards.map((board) =>{
-                    if(board.name === state.currBoard){
+                    if(board.name === state.currBoard.name){
+                        return{
+                            ...board,
+                            columns: board.columns.map((column) =>{
+                                if(column.name === payload.currColumn){
+                                    return{
+                                        ...column,
+                                        tasks: column.tasks.filter((task) =>task != payload.currTask)
+                                    }
+                                }
+                                if(column.name === payload.newCol){
+                                    return{
+                                        ...column,
+                                        tasks: [...column.tasks, payload.currTask]
+                                    }
+                                }
+                                return column
+                            })
+                        }
+                    }
+                    return board
+                })
+            }
+
+        case 'CHANGE_SUBTASK':           
+            return{
+                ...state,
+                boards: state.boards.map((board) =>{
+                    if(board.name === state.currBoard.name){
                         return{
                             ...board,
                             columns: board.columns.map((column) =>{
@@ -152,7 +181,11 @@ const kanbanReducer = (state, action) =>{
                                                 return{
                                                     ...task,
                                                     subtasks: task.subtasks.map((subtask) =>{
-                                                        if(subtask.title === payload.currSubtask){
+                                                        console.log('subtask:' + subtask.title + ' payload ' + payload.currSubtask);
+                                                        
+                                                        if(subtask.title === payload.currSubtask.title){
+                                                            console.log('called');
+                                                            
                                                             return{
                                                                 ...subtask,
                                                                 isCompleted: !subtask.isCompleted
@@ -174,6 +207,13 @@ const kanbanReducer = (state, action) =>{
                     return board
                 })
             }
+        
+        case 'LOGOUT':
+            return{
+                boards:[],
+                currBoard:null,
+                darkMode:false
+            }
 
         default:
             return state
@@ -187,37 +227,18 @@ const [state, dispatch] = useReducer(kanbanReducer, {
     darkMode: false
 })
 
+const {fetchData, fetchResult, isSuccess} = useGetData()
 useEffect(() =>{
-    const fetchData = async()=>{
-        try{
-            const response = await fetch('https://kanban-task-management-web-app-86h6.onrender.com/board/getData',{
-                credentials: "include"
-            })
-            const json = await response.json()
-            if(response.ok){
-                dispatch({type:'SET_DATA', payload:json})
-            }
-        }catch{
-            try{
-                const refresh = await fetch('https://kanban-task-management-web-app-86h6.onrender.com/user/refreshToken',
-                    {credentials: "include"}
-                )
-                if(refresh.ok){
-                    const response = await fetch('https://kanban-task-management-web-app-86h6.onrender.com/board/getData',
-                        {credentials: "include"}
-                    )
-                    const json = await response.json()
-                    if(response.ok){
-                        dispatch({type:'SET_DATA', payload:json})
-                    }
-                }
-            }catch{
-                console.log('User unauthorized or session expired, please login or signup');
-            }
-        }
+    const mountFetch = async()=>{
+        await fetchData()
     }
-    fetchData()
+    mountFetch()
 },[])
+useEffect(() =>{
+    if(isSuccess){
+        dispatch({type:"SET_DATA", payload:fetchResult.boards})
+    }
+},[fetchResult])
 
     return(
         <kanbanContext.Provider value={{state, dispatch}}>
