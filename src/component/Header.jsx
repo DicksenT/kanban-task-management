@@ -63,7 +63,7 @@ function Header(props){
 
     const [deleteBoard, setDeleteBoard] = useState(false)
 
-    const [clickEmail, setClickEmail] = useState(true)
+    const [clickEmail, setClickEmail] = useState(false)
 
     const emailRef = useRef()
     useEffect(() =>{
