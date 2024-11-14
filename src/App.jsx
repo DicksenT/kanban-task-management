@@ -12,39 +12,11 @@ import LoginForm from './pages/LoginForm'
 import Dashboard from './pages/Dashboard'
 
 function App() {
-  const {state, dispatch} = useContext(kanbanContext)
+  const {state} = useContext(kanbanContext)
   const {state: userState} = useContext(authContext)
-  const [data, setData] = useState()
   const [addTask, setAddTask] = useState(false)
 
   /* List of all Function where it mapped Json to change the value */
-
-  const handleChangeStatus = (newStatus, currStatus, selectTask) =>{   
-    const updatedData = data.map((board) =>{
-      if (board.name == currBoard){
-        return{
-          ...board,
-          columns: board.columns.map((column)=>{
-            if(column.name == currStatus){
-              return{
-                ...column,
-                tasks: column.tasks.filter(task => task != selectTask)
-              }
-            }
-            if(column.name == newStatus){
-              return{
-                ...column,
-                tasks: [...column.tasks, selectTask]
-              }
-            }
-            return column
-          })
-        }
-      }
-      return board
-    })
-    setData(updatedData)
-  }
 
   /* get all column or status on currBoard */
   const [statues, setStatues] = useState()
@@ -168,7 +140,6 @@ function App() {
           <Route key={board.name} path={`/${board.name}`} 
             element={
               <Board data={board} 
-              handleChangeStatus={handleChangeStatus}
               statues = {statues}
               width={width}
               setEditBoard={setEditBoard}
