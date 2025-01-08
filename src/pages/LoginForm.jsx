@@ -28,7 +28,6 @@ const handleSubmit = async(e) =>{
         if(response.ok){
             await fetchData()
             setUser(json)
-            
         }
         else{
             setError(json.message)
