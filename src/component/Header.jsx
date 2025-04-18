@@ -26,12 +26,8 @@ function Header(props){
     const location = useLocation()
     useEffect(()=>{
       const locName = decodeURIComponent(location.pathname).slice(1)          
-      const match = state.boards.find(board=>board.name == locName)
-      console.log(locName);
-            
-      if(match){         
-        console.log(match);
-        
+      const match = state.boards.find(board=>board.name == locName)      
+      if(match){             
         dispatch({type:'SET_CURRBOARD', payload:match})
       }
       if(locName === 'dashboard'){
