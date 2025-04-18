@@ -81,10 +81,10 @@ function EditBoard(props){
 
     useEffect(() =>{
         if(isSuccess){
-            navigate(`/${fetchResult.name}`)
             dispatch({type: type ==='edit' ? 'EDIT_BOARD' : 'ADD_BOARD', payload:fetchResult})
-            console.log(fetchResult);
-            
+            setTimeout(() =>{
+                navigate(`/${fetchResult.name}`)
+            },500)        
             setEditBoard(false)
         }
     },[fetchResult])
