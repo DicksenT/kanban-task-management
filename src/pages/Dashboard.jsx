@@ -17,7 +17,7 @@ function Dashboard(props){
             <ul className="dashboardLists">
                 {state.boards && state.boards.map((board) =>(
                     <Link to={`/${board.name}`}>
-                    <li className={`dashboardList `}>
+                    <li className={`dashboardList ${state.darkMode && 'darkStatus'}`}>
                         <h4>{board.name}</h4>
                         <p>{board.totalTask} Tasks</p>
                     </li>
