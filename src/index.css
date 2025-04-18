@@ -4,6 +4,7 @@
   margin: 0;
   box-sizing: border-box;
   font-family: "Plus Jakarta Sans", sans-serif;
+  scrollbar-width: thin;
 }
 body{
   background-color: #f4f7fd;
