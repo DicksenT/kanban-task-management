@@ -54,7 +54,7 @@ function BoardSelect(props){
               <ul className='boardsList boardSelect'>
                 {state.boards && state.boards.map((board) =>(
                   <Link to={`/${board.name}`}>
-                  <li className={board.name === state.currBoard.name ? 'boardList boardActive' : 'boardList'}>
+                  <li className={state.currBoard &&  board.name === state.currBoard.name ? 'boardList boardActive' : 'boardList'}>
                     <img src={boardLogo} alt="" />
                     {board.name}
                   </li>
