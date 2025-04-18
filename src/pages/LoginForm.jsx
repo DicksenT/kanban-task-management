@@ -26,8 +26,8 @@ const handleSubmit = async(e) =>{
         })        
         const json = await response.json()        
         if(response.ok){
-            await fetchData()
             setUser(json)
+            await fetchData()
         }
         else{
             setError(json.message)
@@ -38,7 +38,6 @@ const handleSubmit = async(e) =>{
 }
 useEffect(() =>{
     if(isSuccess){
-        console.log(fetchResult);
         dataDispatch({type: 'SET_DATA', payload: fetchResult.boards})
         dispatch({type:'LOGIN', payload:user})
   
