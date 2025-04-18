@@ -23,8 +23,8 @@ function App() {
   useEffect(() =>{    
     const getStatues = () =>{
       const statusList = []
-      if(state.data){
-        state.data.forEach(board =>{
+      if(state.boards){
+        state.boards.forEach(board =>{
           if(board.name === state.currBoard.name){
             board.columns.forEach((column) =>{
               statusList.push(column)
