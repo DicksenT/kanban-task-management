@@ -171,7 +171,7 @@ function Board(props){
                 </li>
             )) :
             <div className="noColumnContainer">
-                <div className="noColumn">
+                <div className={`noColumn ${state.darkMode && 'dark'}`} >
                     <p>This board is empty, create new column to get started.</p>
                     <button className="addTask addTaskWidth" onClick={handleAddNewColumn}>+Add New Column</button>
                 </div>

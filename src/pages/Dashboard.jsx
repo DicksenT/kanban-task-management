@@ -12,12 +12,12 @@ function Dashboard(props){
     }
 
     return(
-        <section className="dashboardContainer">
+        <section className={`dashboardContainer ${state.darkMode && 'darkStatus'}`}>
             <h2>Dashboard</h2>
             <ul className="dashboardLists">
                 {state.boards && state.boards.map((board) =>(
                     <Link to={`/${board.name}`}>
-                    <li className="dashboardList">
+                    <li className={`dashboardList `}>
                         <h4>{board.name}</h4>
                         <p>{board.totalTask} Tasks</p>
                     </li>
