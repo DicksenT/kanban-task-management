@@ -82,6 +82,10 @@ function EditBoard(props){
     useEffect(() =>{
         if(isSuccess){
             dispatch({type: type ==='edit' ? 'EDIT_BOARD' : 'ADD_BOARD', payload:fetchResult})
+            if(type !== 'edit'){
+                dispatch({type: 'SET_CURRBOARD', payload: fetchResult})
+            }
+            
             setTimeout(() =>{
                 navigate(`/${fetchResult.name}`)
             },500)        
